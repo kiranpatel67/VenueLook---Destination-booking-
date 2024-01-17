@@ -1,33 +1,16 @@
+import 'package:fographdestinationbooking/core/extensions/padding_extension.dart';
+import 'package:fographdestinationbooking/presentation/login/controller/login_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'button.dart';
+import '../../custom_button.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
-class EnterPhoneController extends GetxController {
-  final RxBool animationPlayed = false.obs;
-  final TextEditingController textEditingController = TextEditingController();
-
-  void showSnackbar(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Snack bar Message'),
-        duration: const Duration(seconds: 2),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            // Handle undo action here
-          },
-        ),
-      ),
-    );
-  }
-}
+import '../../utils/constant/app_textstyles.dart';
 
 
 
-class EnterPhone extends StatelessWidget {
-  final EnterPhoneController enterPhoneController = Get.put(EnterPhoneController());
 
+class EnterPhone extends GetWidget<LoginController> {
 
   EnterPhone({Key? key}) : super(key: key);
 
@@ -51,21 +34,15 @@ class EnterPhone extends StatelessWidget {
               child: Stack(
                 children: [
                   Obx(
-                        () => enterPhoneController.animationPlayed.value
+                        () => controller.animationPlayed.value
                         ? Text(
                       'Mobile',
-                      style: TextStyle(
-                        fontSize: screenheight * 0.06,
-                        color: Colors.white,
-                      ),
+                      style: AppHeadingStyle.heading,
                       textAlign: TextAlign.left,
                     )
                         : TypewriterAnimatedTextKit(
                       text: const ['Mobile\nNumber'],
-                      textStyle: TextStyle(
-                        fontSize: screenheight * 0.06,
-                        color: Colors.white,
-                      ),
+                      textStyle: AppHeadingStyle.heading,
                       textAlign: TextAlign.left,
                       totalRepeatCount: 1,
                       repeatForever: false,
@@ -85,7 +62,7 @@ class EnterPhone extends StatelessWidget {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              enterPhoneController.showSnackbar(context);
+                              controller.showSnackbar(context);
                             },
                             child: Row(
                               children: [
@@ -103,13 +80,12 @@ class EnterPhone extends StatelessWidget {
                             ),
                           ),
                           Flexible(
-
                             child: Container(
                               padding: EdgeInsets.only(right: screenheight*0.02),
                               alignment: AlignmentDirectional.topCenter,
                               child: TextField(
                                 keyboardType: TextInputType.phone,
-                                controller: enterPhoneController.textEditingController,
+                                controller: controller.textEditingController,
                                 decoration: InputDecoration(
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(screenheight*0.02),
@@ -146,18 +122,18 @@ class EnterPhone extends StatelessWidget {
               child: Stack(
                 alignment: AlignmentDirectional.topStart,
                 children: [
-                  const Text(
+                  Text(
                     'Your mobile number will be verified.',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
+                    style: AppTextStyles.title,
                   ),
                   Positioned(
                     top: screenheight * 0.06,
                     child: GreenButton(
                       text: 'CONTINUE',
-                      onPressed: () {},
+                      onPressed: () {
+                        print(controller.textEditingController.text);
+                        Get.toNamed('/otp');
+                      },
                     ),
                   ),
                 ],
@@ -165,7 +141,7 @@ class EnterPhone extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      ).addPadding(),
     );
   }
 }

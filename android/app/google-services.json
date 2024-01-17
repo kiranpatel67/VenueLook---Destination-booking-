@@ -1,0 +1,243 @@
+{
+  "project_info": {
+    "project_number": "856661515593",
+    "firebase_url": "https://fograph-apps.firebaseio.com",
+    "project_id": "fograph-apps",
+    "storage_bucket": "fograph-apps.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856661515593:android:ed8e32f5a7935f37dece98",
+        "android_client_info": {
+          "package_name": "com.fograph.destinationbooking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "856661515593-4ol160jr7nv9rhh1aq9ubrg3t4tkco5c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fograph.destinationbooking",
+            "certificate_hash": "d86ee3979a1890b0451fca54fc1138a55c810c44"
+          }
+        },
+        {
+          "client_id": "856661515593-63ni152lnsb80j9g5dqm325ielbmaec6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fograph.destinationbooking",
+            "certificate_hash": "2f0388b274b0394636a30a862d17a2e1e41c2b80"
+          }
+        },
+        {
+          "client_id": "856661515593-66rr6u3vfdc86rbiip786ri61962bf1h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fograph.destinationbooking",
+            "certificate_hash": "9a33fa09fa39ecbde1c9dc90fc6f66c6b38bc122"
+          }
+        },
+        {
+          "client_id": "856661515593-imv62h2leqdhhievetjsf2johgfs3j69.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fograph.destinationbooking",
+            "certificate_hash": "38e4702e40ea5161c62f429e46a52406c74c82a6"
+          }
+        },
+        {
+          "client_id": "856661515593-a1odbal8ojrmqtjbeit1mgilve7j4mur.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBdqfzHD3m6KUF1AexBCNopZ-LMVcvXL0"
+        },
+        {
+          "current_key": "AIzaSyAy36k7KMZpYzNh7WaupABUr1CTDurbLZg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "856661515593-a1odbal8ojrmqtjbeit1mgilve7j4mur.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856661515593:android:3c513473dd180712dece98",
+        "android_client_info": {
+          "package_name": "com.fograph.main"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "856661515593-10b9fe99kbnfa94o1os7fhd8i826lnsm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fograph.main",
+            "certificate_hash": "38e4702e40ea5161c62f429e46a52406c74c82a6"
+          }
+        },
+        {
+          "client_id": "856661515593-ljsocvol1g79j6djqmpn3476r20frmn7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fograph.main",
+            "certificate_hash": "9a33fa09fa39ecbde1c9dc90fc6f66c6b38bc122"
+          }
+        },
+        {
+          "client_id": "856661515593-prtl4sdpck4bvqc8am6q0uupcggj5hnf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fograph.main",
+            "certificate_hash": "2f0388b274b0394636a30a862d17a2e1e41c2b80"
+          }
+        },
+        {
+          "client_id": "856661515593-a1odbal8ojrmqtjbeit1mgilve7j4mur.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBdqfzHD3m6KUF1AexBCNopZ-LMVcvXL0"
+        },
+        {
+          "current_key": "AIzaSyAy36k7KMZpYzNh7WaupABUr1CTDurbLZg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "856661515593-a1odbal8ojrmqtjbeit1mgilve7j4mur.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856661515593:android:8cd9d9f290490078dece98",
+        "android_client_info": {
+          "package_name": "com.fograph.manage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "856661515593-vd171vkd9tacv9h6543epp5qtv90es7o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fograph.manage",
+            "certificate_hash": "a971900a7e2686ba0ca342719d59bcdfd8161599"
+          }
+        },
+        {
+          "client_id": "856661515593-a1odbal8ojrmqtjbeit1mgilve7j4mur.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBdqfzHD3m6KUF1AexBCNopZ-LMVcvXL0"
+        },
+        {
+          "current_key": "AIzaSyAy36k7KMZpYzNh7WaupABUr1CTDurbLZg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "856661515593-a1odbal8ojrmqtjbeit1mgilve7j4mur.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856661515593:android:c071f416012b25e6dece98",
+        "android_client_info": {
+          "package_name": "com.naman.fographmanage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "856661515593-a1odbal8ojrmqtjbeit1mgilve7j4mur.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBdqfzHD3m6KUF1AexBCNopZ-LMVcvXL0"
+        },
+        {
+          "current_key": "AIzaSyAy36k7KMZpYzNh7WaupABUr1CTDurbLZg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "856661515593-a1odbal8ojrmqtjbeit1mgilve7j4mur.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856661515593:android:c51bac6258a52901dece98",
+        "android_client_info": {
+          "package_name": "com.partner.fograph_partner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "856661515593-22naotlo60k8vl33m7outd7gmqabgva4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.partner.fograph_partner",
+            "certificate_hash": "87d980c8a5eed48905e2cd0c78fd4f76542aa85f"
+          }
+        },
+        {
+          "client_id": "856661515593-a1odbal8ojrmqtjbeit1mgilve7j4mur.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBdqfzHD3m6KUF1AexBCNopZ-LMVcvXL0"
+        },
+        {
+          "current_key": "AIzaSyAy36k7KMZpYzNh7WaupABUr1CTDurbLZg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "856661515593-a1odbal8ojrmqtjbeit1mgilve7j4mur.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
