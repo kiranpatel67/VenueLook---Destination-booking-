@@ -7,6 +7,25 @@ extension CustomPadding on Widget{
       child: this,
     );
   }
+  Widget addPaddingLeft({double? padding}){
+    return Padding(
+      padding: EdgeInsets.only(left: padding??10),
+      child: this,
+    );
+  }
+  Widget addPaddingBottom({double? padding}){
+    return Padding(
+      padding: EdgeInsets.only(bottom: padding??10),
+      child: this,
+    );
+  }
+
+  Widget addPaddingRight({double? padding}){
+    return Padding(
+        padding: EdgeInsets.only(right: padding??10),
+      child: this,
+    );
+  }
 }
 
 //for same container use extension

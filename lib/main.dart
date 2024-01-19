@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:fographdestinationbooking/presentation/login/login.dart';
-import 'package:fographdestinationbooking/enter_otp.dart';
-import 'landing_page.dart';
+import 'package:FoGraph/routes/app_route.dart';
+import 'presentation/landing/landing_page.dart';
 import 'package:get/get.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {runApp(MyApp());}
+void main() async{
+  //firebase initialize (default...)
+  WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
+  runApp(MyApp());}
 
 
 class MyApp extends StatelessWidget {
@@ -14,12 +18,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       initialRoute: "/",
-      home: IntroPage(),
-      getPages: [
-        GetPage(name: "/", page:() => IntroPage()),
-        GetPage(name: "/mobile", page: () => EnterPhone()),
-        GetPage(name: "/otp", page: () => EnterOTP())
-      ],
+      home: LandingPage(),
+      getPages: AppRoute.routes,
       debugShowCheckedModeBanner: false,
     );
   }

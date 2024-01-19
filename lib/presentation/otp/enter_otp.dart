@@ -1,11 +1,18 @@
+import 'package:FoGraph/core/extensions/padding_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:fographdestinationbooking/utils/constant/app_textstyles.dart';
-import 'custom_button.dart';
+import 'package:FoGraph/utils/constant/app_textstyles.dart';
+import '../../custom_button.dart';
 import 'package:pinput/pinput.dart';
+import 'package:get/get.dart';
+import '../login/controller/login_controller.dart';
+import '../otp/controller/otp_controller.dart';
 
 
-class EnterOTP extends StatelessWidget {
-  EnterOTP({Key? key}) : super(key: key);
+class OTPScreen extends StatelessWidget {
+
+  final LoginController loginController = Get.find();
+  final OTPController otpController = Get.put(OTPController());
+  OTPScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +44,7 @@ class EnterOTP extends StatelessWidget {
                 children: [
                   Text(
                     'Mobile\nNumber',
-                    style: AppHeadingStyle.heading,
+                    style: AppTextStyles.getTextStyle(screenheight*0.08),
                     textAlign: TextAlign.left,
                   ),
                   Align(
@@ -71,30 +78,31 @@ class EnterOTP extends StatelessWidget {
                             ),
                           ),
                           Flexible(
-                            child: Container(
-                              padding: EdgeInsets.only(right: screenwidth * 0.05),
-                              alignment: AlignmentDirectional.topCenter,
-                              child: TextField(
-                                keyboardType: TextInputType.phone,
-                                // Replace the controller with your logic to retrieve the previous phone number
-                                // controller: TextEditingController(text: "PreviousPhoneNumber"),
-                                decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(screenheight * 0.02),
-                                      borderSide: BorderSide(color: Colors.green)),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(screenheight * 0.02)),
-                                  labelText: 'Enter mobile number',
-                                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                                  labelStyle: TextStyle(
-                                    color: Colors.grey,
+                            child: InkWell(
+                              onTap: () {
+                                Get.back(); // Go back to the previous screen (LoginScreen)
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: screenwidth*0.04),
+                                height: screenheight * 0.08,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(screenheight*0.02),
+                                    color: Colors.white,
+                                  border: Border.all(
+                                    color: Colors.green
+                                )
+                                ),
+                                alignment: AlignmentDirectional.centerStart,
+                                child: Text('${loginController.phoneNumber}',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: screenheight*0.024,
+                                    fontWeight: FontWeight.w400
                                   ),
-                                  filled: true,
-                                  fillColor: Colors.white, // Set the background color
                                 ),
                               ),
                             ),
-                          ),
+                          ).addPaddingBottom(padding: screenheight*0.04).addPaddingRight(padding: screenwidth * 0.05),
                           Container(
                             padding: EdgeInsets.fromLTRB(0, 0, screenwidth*0.04, screenheight*0.1),
                               alignment: AlignmentDirectional.topCenter,

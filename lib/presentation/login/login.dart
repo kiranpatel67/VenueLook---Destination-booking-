@@ -1,5 +1,6 @@
-import 'package:fographdestinationbooking/core/extensions/padding_extension.dart';
-import 'package:fographdestinationbooking/presentation/login/controller/login_controller.dart';
+import 'package:FoGraph/core/extensions/padding_extension.dart';
+import 'package:FoGraph/presentation/login/controller/login_controller.dart';
+import 'package:FoGraph/routes/app_route.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../../custom_button.dart';
@@ -7,12 +8,12 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 
 import '../../utils/constant/app_textstyles.dart';
 
+class LoginScreen extends GetWidget<LoginController> {
+  final LoginController loginController = Get.find();
 
+  final FocusNode _focusNode = FocusNode();
 
-
-class EnterPhone extends GetWidget<LoginController> {
-
-  EnterPhone({Key? key}) : super(key: key);
+  LoginScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +38,12 @@ class EnterPhone extends GetWidget<LoginController> {
                         () => controller.animationPlayed.value
                         ? Text(
                       'Mobile',
-                      style: AppHeadingStyle.heading,
+                      style: AppTextStyles.getTextStyle(screenheight*0.08),
                       textAlign: TextAlign.left,
                     )
                         : TypewriterAnimatedTextKit(
                       text: const ['Mobile\nNumber'],
-                      textStyle: AppHeadingStyle.heading,
+                      textStyle: AppTextStyles.getTextStyle(screenheight*0.08),
                       textAlign: TextAlign.left,
                       totalRepeatCount: 1,
                       repeatForever: false,
@@ -84,23 +85,19 @@ class EnterPhone extends GetWidget<LoginController> {
                               padding: EdgeInsets.only(right: screenheight*0.02),
                               alignment: AlignmentDirectional.topCenter,
                               child: TextField(
+                                onChanged: (value) => loginController.setPhoneNumber(value),
                                 keyboardType: TextInputType.phone,
-                                controller: controller.textEditingController,
                                 decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
+                                  focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(screenheight*0.02),
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Colors.green
                                     )
                                   ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(screenheight*0.02)
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(screenheight*0.02),
                                   ),
-                                  labelText: 'Enter mobile number',
-                                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                                  labelStyle: TextStyle(
-                                    color: Colors.grey,
-                                  ),
+                                  hintText: 'Enter mobile number',
                                   filled: true,
                                   fillColor: Colors.white, // Set the background color
                                 ),
@@ -131,8 +128,9 @@ class EnterPhone extends GetWidget<LoginController> {
                     child: GreenButton(
                       text: 'CONTINUE',
                       onPressed: () {
-                        print(controller.textEditingController.text);
-                        Get.toNamed('/otp');
+                        // print(controller.textEditingController.text);
+                        // String phoneNumber = controller.textEditingController.text;
+                        Get.toNamed(AppRoute.otpPage);
                       },
                     ),
                   ),
@@ -141,7 +139,7 @@ class EnterPhone extends GetWidget<LoginController> {
             ),
           ),
         ],
-      ).addPadding(),
+      ),
     );
   }
 }

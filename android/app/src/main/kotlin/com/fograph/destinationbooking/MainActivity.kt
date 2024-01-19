@@ -1,4 +1,4 @@
-package com.example.fographdestinationbooking
+package com.fograph.destinationbooking
 
 import io.flutter.embedding.android.FlutterActivity
 

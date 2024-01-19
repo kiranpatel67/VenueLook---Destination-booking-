@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'custom_button.dart';
-import 'presentation/login/login.dart';
+import 'package:FoGraph/routes/app_route.dart';
+import 'package:FoGraph/utils/constant/app_textstyles.dart';
+import '../../custom_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:get/get.dart';
@@ -14,7 +15,7 @@ class IntroController extends GetxController {
 }
 
 
-class IntroPage extends StatelessWidget {
+class LandingPage extends StatelessWidget {
   final IntroController introController = Get.put(IntroController());
 
   final Uri _url = Uri.parse('https://fograph.com/beta-tester-policies');
@@ -41,7 +42,7 @@ class IntroPage extends StatelessWidget {
                 alignment: AlignmentDirectional.topStart,
                 children: [
                   DefaultTextStyle(
-                    style: const TextStyle(fontSize: 21, color: Colors.white),
+                    style: AppTextStyles.title,
                     child: AnimatedTextKit(
                       repeatForever: true,
                       isRepeatingAnimation: true,
@@ -60,7 +61,7 @@ class IntroPage extends StatelessWidget {
                       text: 'GET STARTED',
                       onPressed: () {
                         introController.incrementIndex();
-                        Get.toNamed("/mobile");
+                        Get.toNamed(AppRoute.loginPage);
                       },
                     ),
                   ),
@@ -77,26 +78,17 @@ class IntroPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'By clicking Get Started you agree to our',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontStyle: FontStyle.italic,
-                      ),
+                      style: TermHeadingStyle.primary
                     ),
                     InkWell(
                       onTap: () {
                         launchUrl(_url);
                       },
-                      child: const Text(
+                      child: Text(
                         'Terms & Conditions',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontStyle: FontStyle.italic,
-                          decoration: TextDecoration.underline,
-                          decorationColor: Colors.green,
-                          decorationStyle: TextDecorationStyle.solid,
-                        ),
+                        style: TermHeadingStyle.secondary
                       ),
                     ),
                   ],
