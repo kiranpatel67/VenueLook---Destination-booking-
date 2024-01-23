@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
 class LandingController extends GetxController {
-  final TextEditingController textEditingController = TextEditingController();
+  // final TextEditingController textEditingController = TextEditingController();
 
   void showSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(

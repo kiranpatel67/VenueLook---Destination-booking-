@@ -26,6 +26,19 @@ extension CustomPadding on Widget{
       child: this,
     );
   }
+
+  Widget addPaddingVertical({double? padding}){
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: padding??10),
+      child: this,
+    );
+  }
+  Widget addPaddingTop({double? padding}){
+    return Padding(
+      padding: EdgeInsets.only(top: padding??10),
+      child: this,
+    );
+  }
 }
 
 //for same container use extension

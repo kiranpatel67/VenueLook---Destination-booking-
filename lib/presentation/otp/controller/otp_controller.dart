@@ -1,8 +1,12 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:FoGraph/core/service/auth_service.dart';
 
 class OTPController extends GetxController {
-  // final TextEditingController textEditingController = TextEditingController();
+
+  late String verificationId;
+  late String otp;
+  RxBool isOtpReceived = false.obs;
 
   void showSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -12,4 +16,17 @@ class OTPController extends GetxController {
       ),
     );
   }
+
+  void otpReceived() {
+    isOtpReceived.value = true;
+  }
+
+  void setVerificationId(String id) {
+    verificationId = id;
+  }
+
+  void setOtp(String enteredOtp) {
+    otp = enteredOtp;
+  }
 }
+

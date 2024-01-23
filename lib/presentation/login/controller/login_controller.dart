@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 class LoginController extends GetxController {
   final RxBool animationPlayed = false.obs;
   // final TextEditingController textEditingController = TextEditingController();
-RxString phoneNumber = ''.obs;
+  RxString phoneNumber = ''.obs;
+  RxBool showLinearProgress = false.obs;
   void showSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -15,5 +16,8 @@ RxString phoneNumber = ''.obs;
   }
   void setPhoneNumber(String number) {
     phoneNumber.value = number;
+  }
+  void setShowLinearProgress(bool value) {
+    showLinearProgress.value = value;
   }
 }
