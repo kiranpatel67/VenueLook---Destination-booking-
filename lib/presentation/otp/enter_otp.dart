@@ -163,11 +163,8 @@ class OTPScreen extends StatelessWidget {
                         // bool isOtpValid = await authService.verifyOtp();
                         //
                         // if (isOtpValid) {
-                        //   // Move to the next screen if OTP is correct
                         //   Get.toNamed(AppRoute.userinfoPage);
                         // } else {
-                        //   // Show an error message or handle incorrect OTP
-                        //   // You can use Get.snackbar or any other method to show a message
                         //   Get.snackbar(
                         //     'Error',
                         //     'Incorrect OTP. Please try again.',
@@ -178,8 +175,6 @@ class OTPScreen extends StatelessWidget {
                         //     margin: EdgeInsets.zero,
                         //   );
                         // }
-                        //
-                        // // Update isOtpReceived after OTP verification
                         // otpController.otpReceived();
                       },
                     ),

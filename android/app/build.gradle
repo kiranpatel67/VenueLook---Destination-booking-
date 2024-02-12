@@ -33,6 +33,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+//    javacOptions {
+//        "-Xlint:deprecation"
+//        "-Xlint:unchecked"
+//    }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }

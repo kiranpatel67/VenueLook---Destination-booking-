@@ -1,89 +1,116 @@
+import 'package:FoGraph/presentation/home/controller/homescreen_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:FoGraph/routes/app_route.dart';
 
-class HomeController extends GetxController {
-  final List<RxList<String>> horizontalLists = List.generate(3, (_) => <String>[].obs);
-
+class HomeScreen extends StatelessWidget {
+  final HomeScreenController controller = Get.put(HomeScreenController());
   @override
-  void onInit() {
-    super.onInit();
-    for (int i = 0; i < horizontalLists.length; i++) {
-      horizontalLists[i].addAll(List.generate(10, (index) => 'Item ${index + 1}'));
+  Widget build(BuildContext context) {
+    double screenheight = MediaQuery.of(context).size.height;
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Scaffold(
+      bottomNavigationBar: buildBottomNavigationBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text('FoGraph'),
+
+      ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection("destination").snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text('Please Wait');
+          }
+
+          var docs = snapshot.data?.docs;
+
+          if (docs == null || docs.isEmpty) {
+            return Text('No Data Available');
+          }
+
+          return SizedBox(
+            height: 150.0, // Set the desired height of each item in the horizontal list
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: docs.length,
+              itemBuilder: (context, index) {
+                QueryDocumentSnapshot<Map<String, dynamic>> destination = docs[index];
+                return ProductItem(
+                  featureimage: destination['feature_image'],
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+
+
+  }
+
+  Widget buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      currentIndex: controller.selectedIndex.value,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.book),
+          label: 'Bookings',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Profile',
+        ),
+      ],
+      onTap: (index) {
+        controller.changeTabIndex(index);
+        _navigateToPage(index);
+      },
+    );
+  }
+
+  void _navigateToPage(int index) {
+    switch (index) {
+      case 0:
+        Get.offAllNamed(AppRoute.homePage);
+        break;
+      case 1:
+        Get.offAllNamed(AppRoute.bookingsPage);
+        break;
+      case 2:
+        Get.offAllNamed(AppRoute.profilePage);
+        break;
     }
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  final HomeController controller = Get.put(HomeController());
+class ProductItem extends StatelessWidget {
+  final String featureimage;
+
+  ProductItem({
+    required this.featureimage
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        title: Text('FoGraph',
-        style: TextStyle(
-          fontSize: 15
-        ),
-        ),
-      ),
-      backgroundColor: Colors.grey[50],
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            buildHorizontalListView("Top Notch Destinations", controller.horizontalLists[0]),
-            buildHorizontalListView("Prime Destinations", controller.horizontalLists[1]),
-            buildHorizontalListView("Budget Friendly Destinations", controller.horizontalLists[2]),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildHorizontalListView(String heading, RxList<String> items) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Text(
-            heading,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Container(
-          height: 200, // Set the desired height for each row
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Obx(
-                  () => Row(
-                children: List.generate(
-                  items.length,
-                      (index) => buildListItem(items[index]),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildListItem(String item) {
     return Container(
-      width: 200, // Set the desired width for each item
-      height: 180, // Set the desired height for each item
-      margin: EdgeInsets.only(right: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Center(
-        child: Text(
-          item,
-          style: TextStyle(color: Colors.black),
-        ),
+      width: 150.0, // Set the desired width of each item in the horizontal list
+      margin: EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.network(
+            featureimage,
+            height: 100.0, // Set the desired height of the image
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
+        ],
       ),
     );
   }

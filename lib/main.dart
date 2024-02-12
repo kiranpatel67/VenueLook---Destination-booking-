@@ -1,3 +1,5 @@
+import 'package:FoGraph/presentation/home/binding/homescreen_binding.dart';
+import 'package:FoGraph/presentation/home/home_screen.dart';
 import 'package:FoGraph/presentation/landing/binding/landing_binding.dart';
 import 'package:flutter/material.dart';
 import 'package:FoGraph/routes/app_route.dart';
@@ -14,6 +16,7 @@ void main() async{
       apiKey: "AIzaSyCBdqfzHD3m6KUF1AexBCNopZ-LMVcvXL0",
       appId: '856661515593',
       messagingSenderId: '856661515593',
+      storageBucket: "fograph-apps.appspot.com",
       projectId: "fograph-apps")
   );
 
@@ -30,6 +33,8 @@ class MyApp extends StatelessWidget {
       initialRoute: "/",
       home: LandingPage(),
       initialBinding: LandingBinding(),
+      // home: HomeScreen(),
+      // initialBinding: HomeScreenBinding(),
       getPages: AppRoute.routes,
       debugShowCheckedModeBanner: false,
     );
