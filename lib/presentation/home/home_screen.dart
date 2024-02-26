@@ -12,33 +12,41 @@ class HomeScreen extends StatelessWidget {
     double screenwidth = MediaQuery.of(context).size.width;
     return Scaffold(
       bottomNavigationBar: buildBottomNavigationBar(),
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text('FoGraph'),
+        backgroundColor: Colors.grey[50],
+        title: const Text('FoGraph'),
 
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection("destination").snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text('Please Wait');
+            return const Text('Please Wait');
           }
 
           var docs = snapshot.data?.docs;
 
           if (docs == null || docs.isEmpty) {
-            return Text('No Data Available');
+            return const Text('No Data Available');
           }
 
           return SizedBox(
-            height: 150.0, // Set the desired height of each item in the horizontal list
+            height: screenheight*0.45,
+
+            // Set the desired height of each item in the horizontal list
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: docs.length,
               itemBuilder: (context, index) {
                 QueryDocumentSnapshot<Map<String, dynamic>> destination = docs[index];
-                return ProductItem(
-                  featureimage: destination['feature_image'],
+                return Padding(
+                  padding:EdgeInsets.symmetric(horizontal: screenwidth*0.01),
+                  child: ProductItem(
+                    featureimage: destination['feature_image'],
+                    property_name: destination['property_name'],
+                    city_name: destination['city'],
+                  ),
                 );
               },
             ),
@@ -89,26 +97,73 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+
 class ProductItem extends StatelessWidget {
   final String featureimage;
+  final String property_name;
+  final String city_name;
 
   ProductItem({
-    required this.featureimage
+    required this.featureimage,
+    required this.property_name,
+    required this.city_name,
   });
 
   @override
   Widget build(BuildContext context) {
+    double screenwidth = MediaQuery.of(context).size.width;
+    double screenheight = MediaQuery.of(context).size.height;
+
+    double containerWidth = screenwidth * 0.8;
+    double imageSize = containerWidth;
+    double boxHeight = screenheight * 0.13;
+    double padding = 8.0;
+
     return Container(
-      width: 150.0, // Set the desired width of each item in the horizontal list
-      margin: EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      width: containerWidth,
+      child: Stack(
         children: [
-          Image.network(
-            featureimage,
-            height: 100.0, // Set the desired height of the image
-            width: double.infinity,
-            fit: BoxFit.cover,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Image.network(
+              featureimage,
+              fit: BoxFit.cover,
+              width: imageSize,
+              height: imageSize,
+            ),
+          ),
+          Positioned(
+            top: screenheight * 0.22,
+            left: screenwidth * 0.035,
+            width: screenwidth * 0.73,
+            height: boxHeight,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                color: Colors.white,
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(padding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$property_name',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    Text(
+                      '$city_name',
+                      style: TextStyle(
+                        fontSize: 13.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ],
       ),

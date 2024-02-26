@@ -1,4 +1,6 @@
 import 'package:FoGraph/core/extensions/padding_extension.dart';
+import 'package:FoGraph/presentation/login/controller/login_controller.dart';
+import 'package:FoGraph/presentation/userinfo/controller/userinfo_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../profile/controller/profile_controller.dart';
@@ -9,6 +11,8 @@ class ProfilePage extends StatelessWidget {
 
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  UserInfoController userInfoController = Get.put(UserInfoController());
+  LoginController loginController = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +27,7 @@ class ProfilePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildHeader(context),
-            _buildInfoBox('John Doe', '123-456-7890', 'john.doe@example.com', context),
+            _buildInfoBox(context),
             SizedBox(height: 16.0),
             _buildActionButtons(context),
           ],
@@ -68,7 +72,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoBox(String name, String number, String email, BuildContext context) {
+  Widget _buildInfoBox(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
     double screenheight = MediaQuery.of(context).size.height;
 
@@ -77,13 +81,14 @@ class ProfilePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildInfoRow(Icons.person, name, screenheight),
-          _buildInfoRow(Icons.phone, number, screenheight),
-          _buildInfoRow(Icons.email, email, screenheight),
+          _buildInfoRow(Icons.person, userInfoController.name.value, screenheight),
+          _buildInfoRow(Icons.phone, loginController.phoneNumber.value, screenheight),
+          _buildInfoRow(Icons.email, userInfoController.email.value, screenheight),
         ],
       ),
     );
   }
+
 
   Widget _buildInfoRow(IconData icon, String value, double screenheight) {
     return Container(
@@ -219,10 +224,6 @@ class ProfilePage extends StatelessWidget {
                 // Close the bottom sheet
                 Navigator.of(context).pop();
               },
-              style: ElevatedButton.styleFrom(
-                primary: Colors.green,
-                onPrimary: Colors.white,
-              ),
               child: Text('UPDATE'),
             ),
           ],

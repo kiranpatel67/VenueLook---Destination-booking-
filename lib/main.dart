@@ -31,10 +31,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       initialRoute: "/",
-      home: LandingPage(),
-      initialBinding: LandingBinding(),
-      // home: HomeScreen(),
-      // initialBinding: HomeScreenBinding(),
+      // home: LandingPage(),
+      // initialBinding: LandingBinding(),
+      home: HomeScreen(),
+      initialBinding: HomeScreenBinding(),
       getPages: AppRoute.routes,
       debugShowCheckedModeBanner: false,
     );

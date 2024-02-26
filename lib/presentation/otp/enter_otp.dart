@@ -159,23 +159,23 @@ class OTPScreen extends StatelessWidget {
                       text: 'VERIFY OTP',
                       onPressed: () async {
                         // Verify the entered OTP using AuthService
-                        Get.toNamed(AppRoute.userinfoPage);
-                        // bool isOtpValid = await authService.verifyOtp();
-                        //
-                        // if (isOtpValid) {
-                        //   Get.toNamed(AppRoute.userinfoPage);
-                        // } else {
-                        //   Get.snackbar(
-                        //     'Error',
-                        //     'Incorrect OTP. Please try again.',
-                        //     snackPosition: SnackPosition.BOTTOM,
-                        //     backgroundColor: Colors.white,
-                        //     snackStyle: SnackStyle.FLOATING,
-                        //     borderRadius: 10,
-                        //     margin: EdgeInsets.zero,
-                        //   );
-                        // }
-                        // otpController.otpReceived();
+                        // Get.toNamed(AppRoute.userinfoPage);
+                        bool isOtpValid = await authService.verifyOtp();
+
+                        if (isOtpValid) {
+                          Get.toNamed(AppRoute.userinfoPage);
+                        } else {
+                          Get.snackbar(
+                            'Error',
+                            'Incorrect OTP. Please try again.',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.white,
+                            snackStyle: SnackStyle.FLOATING,
+                            borderRadius: 10,
+                            margin: EdgeInsets.zero,
+                          );
+                        }
+                        otpController.otpReceived();
                       },
                     ),
                   ),

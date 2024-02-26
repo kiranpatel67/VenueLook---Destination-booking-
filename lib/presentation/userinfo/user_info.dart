@@ -10,10 +10,14 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../utils/constant/app_textstyles.dart';
 import '../otp/controller/otp_controller.dart';
+import 'package:FoGraph/core/service/auth_service.dart';
+import 'user_information.dart';
 
 class UserInfoScreen extends GetWidget<LoginController> {
   final UserInfoController userInfoController = Get.put(UserInfoController());
   final FocusNode _focusNode = FocusNode();
+
+  final AuthService authService = Get.put(AuthService());
 
   UserInfoScreen({Key? key}) : super(key: key);
 
@@ -148,6 +152,8 @@ class UserInfoScreen extends GetWidget<LoginController> {
                       onPressed: () async {
                         if (validateFields()) {
                           Get.toNamed(AppRoute.homePage);
+                          // Call the method to create the user profile
+                          await authService.createUserProfile();
                         } else {
                           // Show a snackbar for empty fields
                           Get.snackbar(
@@ -162,6 +168,7 @@ class UserInfoScreen extends GetWidget<LoginController> {
                         }
                       },
                     ),
+
                   ),
                 ],
               ),

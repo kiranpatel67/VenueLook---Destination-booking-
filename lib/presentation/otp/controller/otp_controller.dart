@@ -7,7 +7,14 @@ class OTPController extends GetxController {
   late String verificationId;
   late String otp;
   RxBool isOtpReceived = false.obs;
+  late RxString userInformation = ''.obs;
 
+  // Other methods and logic in your controller...
+
+  // Example method to set userInformation
+  void setUserInformation(String information) {
+    userInformation.value = information;
+  }
   void showSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

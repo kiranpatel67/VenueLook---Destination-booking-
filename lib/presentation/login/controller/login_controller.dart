@@ -1,11 +1,18 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:FoGraph/presentation/userinfo/user_information.dart';
 
 class LoginController extends GetxController {
   final RxBool animationPlayed = false.obs;
   // final TextEditingController textEditingController = TextEditingController();
   RxString phoneNumber = ''.obs;
   RxBool showLinearProgress = false.obs;
+  late Rx<UserInformation?> userInformation;
+
+  void setUserInformation(UserInformation information) {
+    userInformation.value = information;
+  }
+
   void showSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
