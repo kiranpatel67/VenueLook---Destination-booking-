@@ -1,10 +1,14 @@
 import 'package:FoGraph/core/extensions/padding_extension.dart';
 import 'package:FoGraph/presentation/login/controller/login_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:FoGraph/presentation/userinfo/controller/userinfo_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../profile/controller/profile_controller.dart';
 import 'package:FoGraph/routes/app_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+
 
 class ProfilePage extends StatelessWidget {
   final ProfileController controller = Get.find();
@@ -18,6 +22,10 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenheight = MediaQuery.of(context).size.height;
     double screenwidth = MediaQuery.of(context).size.width;
+
+    // Fetch user information from Firestore when the page is built
+    fetchUserData();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
@@ -29,12 +37,29 @@ class ProfilePage extends StatelessWidget {
             _buildHeader(context),
             _buildInfoBox(context),
             SizedBox(height: 16.0),
-            _buildActionButtons(context),
+            _buildSignOutButton(context),
+            // _buildActionButtons(context),
           ],
         ),
       ),
       bottomNavigationBar: buildBottomNavigationBar(),
     );
+  }
+
+  // Function to fetch user information from Firestore
+  void fetchUserData() async {
+    // Reference to the "users" collection in Firestore
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    // Get the current phone number from the LoginController
+    String phoneNumber = loginController.phoneNumber.value;
+
+    // Get the user document using the phone number
+    DocumentSnapshot userDocument = await users.doc(phoneNumber).get();
+
+    // Update the user information in controllers
+    userInfoController.setName(userDocument['name'] ?? '');
+    userInfoController.setEmail(userDocument['email'] ?? '');
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -106,37 +131,37 @@ class ProfilePage extends StatelessWidget {
     ).addPaddingTop(padding: screenheight * 0.015);
   }
 
-  Widget _buildActionButtons(BuildContext context) {
-    double screenwidth = MediaQuery.of(context).size.width;
-    double screenheight = MediaQuery.of(context).size.height;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: screenwidth * 0.27),
-      child: GestureDetector(
-        onTap: () {
-          // Show the bottom sheet to edit the profile
-          _showEditProfileBottomSheet(context);
-        },
-        child: Container(
-          height: screenheight * 0.045,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.edit, color: Colors.black, size: screenheight * 0.025)
-                  .addPaddingRight(padding: screenwidth * 0.02),
-              Text(
-                'EDIT PROFILE',
-                style: TextStyle(color: Colors.black, fontSize: screenheight * 0.02),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ).addPaddingTop(padding: screenheight * 0.03);
-  }
+  // Widget _buildActionButtons(BuildContext context) {
+  //   double screenwidth = MediaQuery.of(context).size.width;
+  //   double screenheight = MediaQuery.of(context).size.height;
+  //
+  //   return Padding(
+  //     padding: EdgeInsets.symmetric(horizontal: screenwidth * 0.27),
+  //     child: GestureDetector(
+  //       onTap: () {
+  //         // Show the bottom sheet to edit the profile
+  //         _showEditProfileBottomSheet(context);
+  //       },
+  //       child: Container(
+  //         height: screenheight * 0.045,
+  //         decoration: BoxDecoration(
+  //           border: Border.all(color: Colors.grey),
+  //         ),
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Icon(Icons.edit, color: Colors.black, size: screenheight * 0.025)
+  //                 .addPaddingRight(padding: screenwidth * 0.02),
+  //             Text(
+  //               'EDIT PROFILE',
+  //               style: TextStyle(color: Colors.black, fontSize: screenheight * 0.02),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   ).addPaddingTop(padding: screenheight * 0.03);
+  // }
 
   Widget buildBottomNavigationBar() {
     return BottomNavigationBar(
@@ -177,58 +202,92 @@ class ProfilePage extends StatelessWidget {
   }
 
   // Function to show the bottom sheet
-  void _showEditProfileBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return _buildEditProfileBottomSheet(context);
-      },
-    );
-  }
+  // void _showEditProfileBottomSheet(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return _buildEditProfileBottomSheet(context);
+  //     },
+  //   );
+  // }
 
   // Function to build the bottom sheet content
-  Widget _buildEditProfileBottomSheet(BuildContext context) {
-    // Set initial values for name and email
-    nameController.text = 'John Doe';
-    emailController.text = 'john.doe@example.com';
+//   Widget _buildEditProfileBottomSheet(BuildContext context) {
+//     // Set initial values for name and email
+//     nameController.text = 'John Doe';
+//     emailController.text = 'john.doe@example.com';
+//
+//     return Container(
+//       padding: EdgeInsets.all(16.0),
+//       child: SingleChildScrollView(
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           crossAxisAlignment: CrossAxisAlignment.stretch,
+//           children: [
+//             Text(
+//               'Update Profile',
+//               style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+//             ),
+//             SizedBox(height: 16.0),
+//             TextField(
+//               controller: nameController,
+//               decoration: InputDecoration(labelText: 'Name'),
+//             ),
+//             SizedBox(height: 16.0),
+//             TextField(
+//               controller: emailController,
+//               decoration: InputDecoration(labelText: 'Email'),
+//             ),
+//             SizedBox(height: 16.0),
+//             ElevatedButton(
+//               onPressed: () {
+//                 print('Updated Name: ${nameController.text}');
+//                 print('Updated Email: ${emailController.text}');
+//                 // Close the bottom sheet
+//                 Navigator.of(context).pop();
+//               },
+//               child: Text('UPDATE'),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
 
-    return Container(
-      padding: EdgeInsets.all(16.0),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Update Profile',
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(labelText: 'Name'),
-            ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                // Handle the update logic here
-                // Access the updated name and email using nameController.text and emailController.text
-                // For simplicity, you can print them for now
-                print('Updated Name: ${nameController.text}');
-                print('Updated Email: ${emailController.text}');
-                // Close the bottom sheet
-                Navigator.of(context).pop();
-              },
-              child: Text('UPDATE'),
-            ),
-          ],
+  Widget _buildSignOutButton(BuildContext context) {
+    double screenwidth = MediaQuery.of(context).size.width;
+    double screenheight = MediaQuery.of(context).size.height;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: screenwidth * 0.27),
+      child: GestureDetector(
+        onTap: () {
+          // Call the signOut function when the button is tapped
+          signOut();
+        },
+        child: Container(
+          height: screenheight * 0.045,
+          decoration: BoxDecoration(
+            color: Colors.green, // Set the button color to green
+            border: Border.all(color: Colors.grey),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.logout, color: Colors.white, size: screenheight * 0.025)
+                  .addPaddingRight(padding: screenwidth * 0.02),
+              Text(
+                'SIGN OUT',
+                style: TextStyle(color: Colors.white, fontSize: screenheight * 0.02),
+              ),
+            ],
+          ),
         ),
       ),
-    );
+    ).addPaddingTop(padding: screenheight * 0.03);
+  }
+  void signOut() {
+    FirebaseAuth.instance.signOut();
+    Get.toNamed(AppRoute.landingPage);
   }
 }

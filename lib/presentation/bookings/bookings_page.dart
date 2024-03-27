@@ -75,9 +75,9 @@ class BookingsPage extends StatelessWidget {
             () => IndexedStack(
           index: controller.selectedsubtabIndex.value,
           children: [
-            _buildTabContent('Upcoming Content'),
-            _buildTabContent('Completed Content'),
-            _buildTabContent('Cancelled Content'),
+            _buildTabContent('Oh Snap! No bookings found'),
+            _buildTabContent('Oh Snap! No bookings found'),
+            _buildTabContent('No cancelled bookings'),
           ],
         ),
       ),
@@ -86,12 +86,41 @@ class BookingsPage extends StatelessWidget {
 
   Widget _buildTabContent(String content) {
     return Center(
-      child: Text(
-        content,
-        style: TextStyle(fontSize: 20.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            content,
+            style: TextStyle(fontSize: 15.0),
+            textAlign: TextAlign.center,
+          ),
+          if (controller.selectedsubtabIndex.value == 0 ||
+              controller.selectedsubtabIndex.value == 1) // Show button only for 'Upcoming' and 'Cancelled' tabs
+            ElevatedButton(
+              onPressed: () {
+                _navigateToHomePage();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green, // Set the button background color to green
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0), // Adjust the borderRadius as needed
+                ),
+              ),
+              child: Text(
+                'BOOK A DESTINATION',
+                style: TextStyle(color: Colors.white), // Set the text color to white
+              ),
+            ),
+        ],
       ),
     );
   }
+
+
+  void _navigateToHomePage() {
+    Get.offAllNamed(AppRoute.homePage);
+  }
+
 
   Widget buildBottomNavigationBar() {
     return BottomNavigationBar(

@@ -9,6 +9,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../utils/constant/app_textstyles.dart';
 import '../otp/controller/otp_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginScreen extends GetWidget<LoginController> {
   final LoginController loginController = Get.find();
@@ -164,6 +165,7 @@ class LoginScreen extends GetWidget<LoginController> {
                         String phoneNumber = loginController.phoneNumber.value;
                         if (validatePhoneNumber(phoneNumber)) {
                           controller.setShowLinearProgress(true);
+
                           Get.toNamed(AppRoute.otpPage);
                           await authService.verifyPhone();
                         } else {
@@ -189,4 +191,6 @@ class LoginScreen extends GetWidget<LoginController> {
       ),
     );
   }
+
 }
+

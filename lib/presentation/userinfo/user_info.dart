@@ -7,15 +7,13 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../../custom_button.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../utils/constant/app_textstyles.dart';
-import '../otp/controller/otp_controller.dart';
-import 'package:FoGraph/core/service/auth_service.dart';
-import 'user_information.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserInfoScreen extends GetWidget<LoginController> {
   final UserInfoController userInfoController = Get.put(UserInfoController());
   final FocusNode _focusNode = FocusNode();
+  final LoginController loginController = Get.put(LoginController());
 
   final AuthService authService = Get.put(AuthService());
 
@@ -150,10 +148,12 @@ class UserInfoScreen extends GetWidget<LoginController> {
                     child: GreenButton(
                       text: 'CONTINUE',
                       onPressed: () async {
+                        String name = userInfoController.name.value;
+                        String email = userInfoController.email.value;
                         if (validateFields()) {
-                          Get.toNamed(AppRoute.homePage);
-                          // Call the method to create the user profile
-                          await authService.createUserProfile();
+                          await addUserToFirestore(name, email);
+                          // Get.toNamed(AppRoute.homePage);
+                          Get.toNamed(AppRoute.profilePage);
                         } else {
                           // Show a snackbar for empty fields
                           Get.snackbar(
@@ -177,5 +177,18 @@ class UserInfoScreen extends GetWidget<LoginController> {
         ],
       ),
     );
+  }
+
+  Future<void> addUserToFirestore(String name, String email) async {
+    // Reference to the "users" collection in Firestore
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    String phoneNumber = loginController.phoneNumber.value;
+    // Add a new document with the phone number as the document name
+    await users.doc(phoneNumber).set({
+      'phone' : phoneNumber,
+      'mail': email,
+      'name': name,
+      // You can add additional fields here as needed
+    });
   }
 }

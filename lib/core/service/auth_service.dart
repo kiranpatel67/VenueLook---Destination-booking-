@@ -4,18 +4,31 @@ import 'package:FoGraph/presentation/login/controller/login_controller.dart';
 import 'package:FoGraph/presentation/otp/controller/otp_controller.dart';
 import 'package:FoGraph/routes/app_route.dart';
 import 'package:FoGraph/presentation/userinfo/controller/userinfo_controller.dart';
-import 'package:FoGraph/presentation/userinfo/user_information.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 class AuthService {
   FirebaseAuth _auth = FirebaseAuth.instance;
   final LoginController loginController = Get.find();
   final OTPController otpController = Get.find();
-
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final UserInfoController userInfoController = Get.put(UserInfoController());
 
 
   // ... other methods
+  Future<bool> checkPhoneNumberInFirestore(String phoneNumber) async {
+    try {
+      // Query Firestore collection to check if the phone number exists
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('users')
+          .where('phone', isEqualTo: phoneNumber)
+          .get();
 
+      // If there are any documents, the phone number exists
+      return querySnapshot.docs.isNotEmpty;
+    } catch (e) {
+      print('Error checking phone number in Firestore: $e');
+      return false; // Return false in case of an error
+    }
+  }
   Future<void> createUserProfile() async {
     try {
       User? user = _auth.currentUser;
@@ -51,43 +64,22 @@ class AuthService {
 
 // ... (Previous code)
 
-  Future<User?> signInWithOTP() async {
-    try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: otpController.verificationId,
-        smsCode: otpController.otp,
-      );
-
-      UserCredential authResult = await _auth.signInWithCredential(credential);
-      User? user = authResult.user;
-
-      if (user != null) {
-        // Store user information (name, email, etc.) in your user model or in a separate class
-        // For simplicity, let's assume you have a User model
-        UserInformation userInformation = UserInformation(
-          name: 'John Doe', // Replace with the actual name
-          email: 'john.doe@example.com', // Replace with the actual email
-          phoneNumber: user.phoneNumber ?? '', // Get the phone number from the user object
-        );
-
-        // Save user information for future use
-        loginController.setUserInformation(userInformation);
-      }
-
-      return user;
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
 
 // ... (Remaining code)
 
 
   Future<bool> verifyOtp() async {
     try {
-      User? user = await signInWithOTP();
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: otpController.verificationId,
+        smsCode: otpController.otp,
+      );
 
+      // Send the OTP to Firebase for verification
+      await _auth.signInWithCredential(credential);
+
+      // After successful OTP verification, perform additional actions
+      User? user = _auth.currentUser;
       if (user != null) {
         // Fetch additional user information if needed
         String? userToken = await user.getIdToken();
@@ -108,6 +100,7 @@ class AuthService {
       return false; // Indicate that OTP verification failed
     }
   }
+
 
 
 }

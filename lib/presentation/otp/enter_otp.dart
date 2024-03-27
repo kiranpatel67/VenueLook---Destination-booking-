@@ -159,11 +159,28 @@ class OTPScreen extends StatelessWidget {
                       text: 'VERIFY OTP',
                       onPressed: () async {
                         // Verify the entered OTP using AuthService
-                        // Get.toNamed(AppRoute.userinfoPage);
                         bool isOtpValid = await authService.verifyOtp();
 
                         if (isOtpValid) {
-                          Get.toNamed(AppRoute.userinfoPage);
+                          // Check if the phone number exists in Firestore
+                          bool exists = await authService.checkPhoneNumberInFirestore(loginController.phoneNumber.value);
+
+                          if (exists) {
+                            Get.toNamed(AppRoute.homePage);
+                          } else {
+                            Get.toNamed(AppRoute.userinfoPage);
+                            // Phone number doesn't exist, handle accordingly (redirect to appropriate page, show error message, etc.)
+                            // For now, let's show a snackbar
+                            // Get.snackbar(
+                            //   'Error',
+                            //   'Phone number does not exist.',
+                            //   snackPosition: SnackPosition.BOTTOM,
+                            //   backgroundColor: Colors.white,
+                            //   snackStyle: SnackStyle.FLOATING,
+                            //   borderRadius: 10,
+                            //   margin: EdgeInsets.zero,
+                            // );
+                          }
                         } else {
                           Get.snackbar(
                             'Error',
@@ -179,6 +196,7 @@ class OTPScreen extends StatelessWidget {
                       },
                     ),
                   ),
+
                 ],
               ),
             ),
