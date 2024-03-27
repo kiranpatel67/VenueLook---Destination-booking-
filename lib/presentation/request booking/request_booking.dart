@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 
@@ -8,14 +7,14 @@ class RequestBookings extends StatefulWidget {
   const RequestBookings({super.key});
 
   @override
-  _RequestBookingsState createState() => _RequestBookingsState();
+  _RequestBookingsState createState() {
+    return _RequestBookingsState();
+  }
 }
 
 class _RequestBookingsState extends State<RequestBookings> {
   late PageController _pageController;
   int _currentPage = 0;
-  bool _isSliderVisible = false;
-  double _sliderPosition = 0.0;
 
   @override
   void initState() {
@@ -25,7 +24,6 @@ class _RequestBookingsState extends State<RequestBookings> {
   }
 
   void _startAutomaticPageChange() {
-    // Automatically change the page every 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         if (_currentPage < _pageController.page! + 1) {
@@ -43,7 +41,7 @@ class _RequestBookingsState extends State<RequestBookings> {
   @override
   Widget build(BuildContext context) {
     double screenheight = MediaQuery.of(context).size.height;
-    // Retrieve the arguments passed from the HomeScreen
+    double screenwidth = MediaQuery.of(context).size.width;
     final Map<String, dynamic>? args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     // Check if args are not null and contain the required information
@@ -51,7 +49,7 @@ class _RequestBookingsState extends State<RequestBookings> {
       final int index = args['index'] as int;
       final List<List<String>> propertyImagesList = args['property_images'] as List<List<String>>;
       final String property = args['property_name'] as String;
-      final String city_name = args['city'] as String;
+      final String cityName = args['city'] as String;
 
       return Scaffold(
         body: Stack(
@@ -84,16 +82,16 @@ class _RequestBookingsState extends State<RequestBookings> {
             ),
             // Dots indicator
             Positioned(
-              top: 16.0,
-              right: 16.0,
+              top: screenheight * 0.06,
+              right: screenwidth * 0.05,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: List.generate(
                   propertyImagesList[index].length,
                       (index) => Container(
                     margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                    width: 8.0,
-                    height: 8.0,
+                    width: screenwidth*0.03,
+                    height: screenheight*0.015,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: _currentPage == index ? Colors.white : Colors.grey,
@@ -109,7 +107,7 @@ class _RequestBookingsState extends State<RequestBookings> {
                   children: [
                     Text(
                       property,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
                         fontSize: 40.0,
@@ -120,8 +118,8 @@ class _RequestBookingsState extends State<RequestBookings> {
                     Align(
                       alignment: Alignment.bottomLeft,
                       child: Text(
-                        city_name,
-                        style: TextStyle(
+                        cityName,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,
                         ), // Allow text to overflow and wrap to the next line
@@ -130,23 +128,25 @@ class _RequestBookingsState extends State<RequestBookings> {
                   ],
                 ),
               ),
-            ),
+            ).paddingSymmetric(horizontal: screenwidth * 0.02),
 
             SlidingUpPanel(
-              minHeight: 50,
+              minHeight: screenheight * 0.08,
               maxHeight: screenheight * 0.8,
-              panel: Center(
+              panel: const Center(
                 child: Text('Panel Content'),
               ),
               collapsed: Container(
-                height: 50,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     color: Colors.green,
                 ),
                 child: Center(
                   child: Text(
                     "REQUEST BOOKING",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                        color: Colors.white,
+                      fontSize: screenheight * 0.02
+                    ),
                   ),
                 ),
               ),

@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
           List<Map<String, dynamic>> type3List = [];
 
           docs.forEach((doc) {
-            var data = doc.data() as Map<String, dynamic>;
+            var data = doc.data();
             if (data.containsKey('type')) {
               int type = data['type'];
               if (type == 1) {
@@ -88,7 +88,7 @@ class HomeScreen extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18.0,
           ),
@@ -136,14 +136,14 @@ class HomeScreen extends StatelessWidget {
 
         // Display images in a 2x2 grid
         return GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 8.0,
             mainAxisSpacing: 8.0,
           ),
           itemCount: docs.length,
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             Map<String, dynamic>? offer = docs[index].data() as Map<String, dynamic>?;
 
@@ -254,9 +254,8 @@ class ProductItem extends StatelessWidget {
             'city': city_name,
           },
         );
-        print('Image tapped');
       },
-      child: Container(
+      child: SizedBox(
         width: containerWidth,
         child: Stack(
           children: [
@@ -289,15 +288,15 @@ class ProductItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$property_name',
-                        style: TextStyle(
+                        property_name,
+                        style: const TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.0,
                         ),
                       ),
                       Text(
-                        '$city_name',
-                        style: TextStyle(
+                        city_name,
+                        style: const TextStyle(
                           fontSize: 13.0,
                         ),
                       ),
@@ -320,7 +319,7 @@ class DefaultImageWidget extends StatelessWidget {
       color: Colors.grey, // Set the background color of the default image
       width: double.infinity,
       height: double.infinity,
-      child: Center(
+      child: const Center(
         child: Icon(
           Icons.error,
           color: Colors.white, // Set the color of the error icon
@@ -335,18 +334,17 @@ class DefaultImageWidget extends StatelessWidget {
 class LogoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    double screenheight = MediaQuery.of(context).size.height;
     double screenwidth = MediaQuery.of(context).size.width;
     double logosize = screenwidth * 0.08;
     return FutureBuilder(
       future: fetchLogoUrl(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
 
         if (snapshot.hasError) {
-          return Text('Error loading logo');
+          return const Text('Error loading logo');
         }
 
         String logoUrl = snapshot.data.toString();
@@ -369,8 +367,7 @@ class LogoWidget extends StatelessWidget {
       String downloadURL = await ref.getDownloadURL();
       return downloadURL;
     } catch (e) {
-      print('Error fetching logo: $e');
-      throw e;
+      rethrow;
     }
   }
 }

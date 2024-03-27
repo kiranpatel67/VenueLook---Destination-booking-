@@ -24,7 +24,7 @@ class OTPScreen extends StatelessWidget {
     final defaultPinTheme = PinTheme(
       width: screenwidth * 0.15,
       height: screenheight * 0.09,
-      textStyle: TextStyle(color: Colors.white),
+      textStyle: const TextStyle(color: Colors.white),
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(15.0),
@@ -67,7 +67,7 @@ class OTPScreen extends StatelessWidget {
                               children: [
                                 Image(
                                   image:
-                                  AssetImage('asset/img/india_flag.png'),
+                                  const AssetImage('asset/img/india_flag.png'),
                                   width: screenwidth * 0.09,
                                 ).addPaddingRight(padding: screenwidth * 0.02),
                                 Text(
@@ -139,9 +139,9 @@ class OTPScreen extends StatelessWidget {
                 children: [
                   Visibility(
                     visible: !(otpController.isOtpReceived.value),
-                    child: Container(
+                    child: SizedBox(
                       height: screenheight * 0.004,
-                      child: LinearProgressIndicator(
+                      child: const LinearProgressIndicator(
                         backgroundColor: Colors.green,
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
@@ -151,35 +151,22 @@ class OTPScreen extends StatelessWidget {
                   Text(
                     'Your mobile number will be verified.',
                     style: AppTextStyles.title,
-                  ).addPaddingTop(padding: screenheight * 0.04), // Add some spacing
+                  ).addPaddingTop(padding: screenheight * 0.04),
 
                   Align(
                     alignment: Alignment.centerLeft,
                     child: GreenButton(
                       text: 'VERIFY OTP',
                       onPressed: () async {
-                        // Verify the entered OTP using AuthService
                         bool isOtpValid = await authService.verifyOtp();
 
                         if (isOtpValid) {
-                          // Check if the phone number exists in Firestore
                           bool exists = await authService.checkPhoneNumberInFirestore(loginController.phoneNumber.value);
 
                           if (exists) {
                             Get.toNamed(AppRoute.homePage);
                           } else {
                             Get.toNamed(AppRoute.userinfoPage);
-                            // Phone number doesn't exist, handle accordingly (redirect to appropriate page, show error message, etc.)
-                            // For now, let's show a snackbar
-                            // Get.snackbar(
-                            //   'Error',
-                            //   'Phone number does not exist.',
-                            //   snackPosition: SnackPosition.BOTTOM,
-                            //   backgroundColor: Colors.white,
-                            //   snackStyle: SnackStyle.FLOATING,
-                            //   borderRadius: 10,
-                            //   margin: EdgeInsets.zero,
-                            // );
                           }
                         } else {
                           Get.snackbar(

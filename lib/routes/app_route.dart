@@ -1,7 +1,5 @@
-import 'package:FoGraph/navigation.dart';
 import 'package:FoGraph/presentation/bookings/binding/bookings_controller.dart';
 import 'package:FoGraph/presentation/bookings/bookings_page.dart';
-import 'package:FoGraph/presentation/home/binding/homescreen_binding.dart';
 import 'package:FoGraph/presentation/home/home_screen.dart';
 import 'package:FoGraph/presentation/login/binding/login_binding.dart';
 import 'package:FoGraph/presentation/login/login.dart';
@@ -32,6 +30,6 @@ class AppRoute{
     GetPage(name: homePage, page: ()=>HomeScreen()),
     GetPage(name: profilePage, page: ()=>ProfilePage(), bindings: [ProfileBinding()]),
     GetPage(name: bookingsPage, page: ()=>BookingsPage(), bindings: [BookingsBinding()]),
-    GetPage(name: requestbooking, page: ()=>RequestBookings(), bindings: [RequestBookingsBinding()])
+    GetPage(name: requestbooking, page: ()=>const RequestBookings(), bindings: [RequestBookingsBinding()])
   ];
 }
