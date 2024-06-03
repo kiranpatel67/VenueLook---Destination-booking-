@@ -140,14 +140,32 @@ class _RequestBookingsState extends State<RequestBookings> {
                 decoration: const BoxDecoration(
                     color: Colors.green,
                 ),
-                child: Center(
-                  child: Text(
-                    "REQUEST BOOKING",
-                    style: TextStyle(
-                        color: Colors.white,
-                      fontSize: screenheight * 0.02
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                              ' ',
+                              style: TextStyle(fontSize: 12.0),
+                        ),
+                        Text(
+                          '',
+                          style: TextStyle(fontSize: 12.0),
+                        ),
+                      ],
                     ),
-                  ),
+                    Row(
+                      children: [
+                        Text(
+                          "REQUEST BOOKING",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: screenheight * 0.02
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ),
 

@@ -1,6 +1,8 @@
 import 'package:FoGraph/presentation/home/binding/homescreen_binding.dart';
 import 'package:FoGraph/presentation/home/home_screen.dart';
 import 'package:FoGraph/presentation/landing/binding/landing_binding.dart';
+import 'package:FoGraph/presentation/test.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:FoGraph/routes/app_route.dart';
 import 'presentation/landing/landing_page.dart';
@@ -25,14 +27,14 @@ void main() async{
 
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+   MyApp({super.key});
+   FirebaseAuth firebaseAuth= FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       initialRoute: "/",
-      home: LandingPage(),
-      initialBinding: LandingBinding(),
+      home: firebaseAuth.currentUser != null? HomeScreen(): LandingPage(),
+      initialBinding: firebaseAuth.currentUser != null? HomeScreenBinding(): LandingBinding(),
       // home: HomeScreen(),
       // initialBinding: HomeScreenBinding(),
       getPages: AppRoute.routes,

@@ -14,19 +14,20 @@ dependencies:
   animated_text_kit: ^4.2.2
   url_launcher: ^6.2.3
   get: ^4.6.6
-  pinput: ^3.0.1
+  pinput: ^4.0.0
   firebase_core: ^2.24.2
   firebase_auth: ^4.16.0
   cloud_firestore: ^4.15.3
   firebase_storage: ^11.6.4
   cached_network_image: ^3.3.1
   sliding_up_panel: ^2.0.0+1
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
 
