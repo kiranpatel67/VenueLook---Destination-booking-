@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:FoGraph/presentation/home/controller/homescreen_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,7 +8,7 @@ import 'package:FoGraph/routes/app_route.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../Data_model/request_data_model.dart';
+import '../../Data_model/HomeScreen_data_model.dart';
 
 class HomeScreen extends StatelessWidget {
   final HomeScreenController controller = Get.put(HomeScreenController());
@@ -128,13 +130,7 @@ class HomeScreen extends StatelessWidget {
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: screenwidth * 0.02),
                   child: ProductItem(
-                    featureimage:  "${ destination.featureimage}",
-                    property_name: "${destination.propertyname}",
-                    city_name: "${destination.city}" ,
-                    index: index,
-                    propertyImagesList: propertyImagesList,
-                    numberofhours: "${destination.hourlist?.first}" ,
-                    price: double.tryParse("${destination.pricelist?.first}") ?? 0,
+                    destination: destination,
                   ),
                 );
               },
@@ -174,22 +170,14 @@ class HomeScreen extends StatelessWidget {
               HomeDestinationData destination = typeList[index];
               List<String> propertyImages =
                   destination.propertyImages?.cast<String>() ??
-                      []; // Ensure that property_images is a List<String>
+                      [];
+              print(destination.propertyImages);
               propertyImagesList.add(propertyImages);
               return Padding(
                 padding: EdgeInsets.fromLTRB(6, 0, 0, 20),
                 child: SizedBox(
                   child: ProductItem(
-                    featureimage: destination.featureimage ?? '',
-                    // Provide a default value if null
-                    property_name: destination.propertyname ?? '',
-                    // Provide a default value if null
-                    city_name: destination.city?? '',
-                    // Provide a default value if null
-                    index: index,
-                    propertyImagesList: propertyImagesList,
-                    numberofhours: "${destination.hourlist?.first}",
-                    price: double.tryParse(destination.pricelist!.first) ?? 0.0,
+                    destination : destination,
                     imageHeight: 200,
                     imageWidth: screenwidth,
                   ),
@@ -308,27 +296,12 @@ class HomeScreen extends StatelessWidget {
 }
 
 class ProductItem extends StatelessWidget {
-  final String featureimage;
-  final String property_name;
-  final String city_name;
-  final int index; // Add property_images to store the array
-  final List<List<String>> propertyImagesList;
-  final String numberofhours;
-  final double price;
+
+  final HomeDestinationData destination;
   final double? imageHeight;
   final double? imageWidth;
 
-  const ProductItem({
-    required this.featureimage,
-    required this.property_name,
-    required this.city_name,
-    required this.index,
-    required this.propertyImagesList,
-    required this.numberofhours,
-    required this.price,
-    this.imageHeight,
-    this.imageWidth,
-  });
+  const ProductItem({required this.destination,  this.imageHeight,  this.imageWidth});
 
   @override
   Widget build(BuildContext context) {
@@ -341,18 +314,32 @@ class ProductItem extends StatelessWidget {
     double padding = 8.0;
 
     return GestureDetector(
+      // onTap: () {
+      //   // Pass the selected index and property_images to Request_Bookings page
+      //   Get.toNamed(
+      //     AppRoute.requestbooking,
+      //     arguments: {
+      //       'destination' : jsonEncode(destination.toMap())
+      //       // 'index': index,
+      //       // 'property_images': propertyImagesList,
+      //       // 'property_name': property_name,
+      //       // 'city': city_name,
+      //       // 'price': price,
+      //       // 'numberofhours': numberofhours,
+      //       // 'property_Address': propertyAddress,
+      //     },
+      //   );
+      // },
       onTap: () {
-        // Pass the selected index and property_images to Request_Bookings page
+        // Ensure destination data is properly serialized
         Get.toNamed(
           AppRoute.requestbooking,
           arguments: {
-            'index': index,
-            'property_images': propertyImagesList,
-            'property_name': property_name,
-            'city': city_name,
+            'destination': destination,
           },
         );
       },
+
       child: SizedBox(
         width: containerWidth,
         child: Stack(
@@ -360,7 +347,7 @@ class ProductItem extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(22.0),
               child: Image.network(
-                featureimage,
+                "${destination.featureimage}",
                 fit: BoxFit.cover,
                 width: imageWidth ?? imageSize,
                 height: imageHeight ?? screenheight * 0.4,
@@ -389,14 +376,14 @@ class ProductItem extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Text(
-                          property_name,
+                          "${destination.propertyname}",
                           style: const TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 14.0,
                           ),
                         ),
                         Text(
-                          city_name,
+                          "${destination.city}",
                           style: const TextStyle(
                             fontSize: 10.0,
                           ),
@@ -422,7 +409,7 @@ class ProductItem extends StatelessWidget {
                                   width: 4.0,
                                 ),
                                 Text(
-                                  '${numberofhours} ',
+                                  '${destination.hourlist?.first} ',
                                   style: TextStyle(fontSize: 12.0),
                                 )
                               ],
@@ -466,7 +453,7 @@ class ProductItem extends StatelessWidget {
   }
 
   String get _modifyPrice {
-    return (price + (price * 8 / 100)).toString();
+    return (destination.price! + (destination.price! * 8 / 100)).toString();
   }
 }
 

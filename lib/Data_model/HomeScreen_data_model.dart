@@ -1,6 +1,9 @@
+import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeDestinationData {
+   var id;
    String? city;
    String? featureimage;
    String? manageremail;
@@ -20,6 +23,7 @@ class HomeDestinationData {
    double? price;
 
    HomeDestinationData({
+      this.id,
       this.city,
       this.featureimage,
       this.manageremail,
@@ -41,6 +45,7 @@ class HomeDestinationData {
 
    factory HomeDestinationData.fromMap(Map<String, dynamic> map) {
       return HomeDestinationData(
+         id: map['id'],
          city: map['city'],
          featureimage: map['feature_image'],
          manageremail: map['manager_email'],
@@ -55,13 +60,13 @@ class HomeDestinationData {
          propertyImages: map['property_images'] != null ? List<String>.from(map['property_images']) : [],
          hourlist: map['hour_list'] != null? List<String>.from(map['hour_list']) : [],
          paymentmethod: map['payment_method'] != null ? List<String>.from(map['payment_method']) : [],
-         numberOfHours: map['number_of_hours'] != null? List<String>.from(map['number_of_hours']) :[],
          pricelist: map['price_list']!= null ? List<String>.from(map['price_list'].map((x)=> x.toString())) : [],
          price: double.tryParse(map['price'].toString()),
       );
    }
    Map<String, dynamic> toMap() {
       return {
+         'id': id,
          'city': city,
          'feature_image': featureimage,
          'manager_email': manageremail,
@@ -73,10 +78,9 @@ class HomeDestinationData {
          'latlng':latlng,
          'status':status,
          'type':type,
-         'property_images_list': propertyImages,
-         'hourlist':hourlist,
+         'property_images': propertyImages,
+         'hour_list':hourlist,
          'payment_method':paymentmethod,
-         'number_of_hours': numberOfHours,
          'price_list':pricelist,
          'price': price,
       };

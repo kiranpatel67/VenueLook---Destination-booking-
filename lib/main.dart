@@ -15,11 +15,11 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
       options: FirebaseOptions(
-      apiKey: "AIzaSyCBdqfzHD3m6KUF1AexBCNopZ-LMVcvXL0",
-      appId: '856661515593',
-      messagingSenderId: '856661515593',
-      storageBucket: "fograph-apps.appspot.com",
-      projectId: "fograph-apps")
+          apiKey: "AIzaSyCBdqfzHD3m6KUF1AexBCNopZ-LMVcvXL0",
+          appId: '856661515593',
+          messagingSenderId: '856661515593',
+          storageBucket: "fograph-apps.appspot.com",
+          projectId: "fograph-apps")
   );
 
   Get.lazyPut(() => OTPController());
@@ -27,8 +27,8 @@ void main() async{
 
 
 class MyApp extends StatelessWidget {
-   MyApp({super.key});
-   FirebaseAuth firebaseAuth= FirebaseAuth.instance;
+  MyApp({super.key});
+  FirebaseAuth firebaseAuth= FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -44,4 +44,3 @@ class MyApp extends StatelessWidget {
 }
 
 //otp - service (authentication)
-
