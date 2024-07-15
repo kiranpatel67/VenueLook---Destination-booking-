@@ -1,4 +1,3 @@
-import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 

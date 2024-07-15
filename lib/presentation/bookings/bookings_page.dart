@@ -1,12 +1,15 @@
 import 'package:FoGraph/navigation.dart';
 import 'package:FoGraph/presentation/bookings/controller/bookings_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:FoGraph/routes/app_route.dart';
 
+import '../../Data_model/HomeScreen_data_model.dart';
+
 class BookingsPage extends StatelessWidget {
   final BookingsController controller = Get.find();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,11 +76,11 @@ class BookingsPage extends StatelessWidget {
     return Expanded(
       child: Obx(
             () => IndexedStack(
-          index: controller.selectedsubtabIndex.value,
+          index: controller.selectedsubtabIndex.value ?? 0, // Default to 0 if null
           children: [
-            _buildTabContent('Oh Snap! No bookings found'),
-            _buildTabContent('Oh Snap! No bookings found'),
-            _buildTabContent('No cancelled bookings'),
+            _buildTabContent(controller.selectedsubtabIndex.value != null ? (controller.selectedsubtabIndex.value == 0 ? 'Oh Snap! No bookings found' : '') : ''),
+            _buildTabContent(controller.selectedsubtabIndex.value != null ? (controller.selectedsubtabIndex.value == 1 ? 'Oh Snap! No bookings found' : '') : ''),
+            // _buildTabContent('No cancelled bookings'),
           ],
         ),
       ),
@@ -89,6 +92,18 @@ class BookingsPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          FutureBuilder(
+            future: getAllBookings(),
+            builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text('Booking details loaded successfully');
+                } else {
+                  return Text('No booking details found');
+                }
+
+            },
+          ),
+          SizedBox(height: 20), // Add some space between the card and the button
           Text(
             content,
             style: TextStyle(fontSize: 15.0),
@@ -158,6 +173,29 @@ class BookingsPage extends StatelessWidget {
         Get.offAllNamed(AppRoute.profilePage);
         break;
     }
+  }
+
+
+  Future<void> getAllBookings() async {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final String currentUid = _auth.currentUser!.uid;
+    final CollectionReference _bookingCollection = _firestore
+        .collection('destination')
+        .doc(controller.destination.value?.id)
+        .collection('booking');
+    Rx<HomeDestinationData?> destination = Rx<HomeDestinationData?>(null);
+    final QuerySnapshot querySnapshot = await _bookingCollection.get();
+
+    querySnapshot.docs.forEach((document) {
+      if (document['user_id'] == currentUid) {
+        print('Booking details:');
+        print('Booking ID: ${destination.value?.propertyname}');
+        print('Booking Date: ${destination.value?.propertyAddress}');
+        print('Booking Price: ${destination.value?.city}');
+        // Show other booking details here
+      }
+    });
   }
 }
 

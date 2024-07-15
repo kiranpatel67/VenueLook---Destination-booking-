@@ -1,5 +1,6 @@
 import 'package:FoGraph/presentation/bookings/binding/bookings_controller.dart';
 import 'package:FoGraph/presentation/bookings/bookings_page.dart';
+import 'package:FoGraph/presentation/destinationbooking/detinationbookingController.dart';
 import 'package:FoGraph/presentation/home/home_screen.dart';
 import 'package:FoGraph/presentation/login/binding/login_binding.dart';
 import 'package:FoGraph/presentation/login/login.dart';
@@ -8,12 +9,13 @@ import 'package:FoGraph/presentation/otp/enter_otp.dart';
 import 'package:FoGraph/presentation/profile/binding/profile_binding.dart';
 import 'package:FoGraph/presentation/profile/profile_page.dart';
 import 'package:FoGraph/presentation/request%20booking/binding/requestbooking_binding.dart';
-import 'package:FoGraph/presentation/request%20booking/request_booking.dart';
 import 'package:FoGraph/presentation/userinfo/binding/userinfo_binding.dart';
 import 'package:FoGraph/presentation/userinfo/user_info.dart';
 import 'package:get/get.dart';
 
-import '../presentation/request booking/getview.dart';
+import '../presentation/destinationbooking/destinationbookingbinding.dart';
+import '../presentation/destinationbooking/destinationbookingview.dart';
+import '../presentation/request booking/request_booking_view.dart';
 
 class AppRoute{
   static const String loginPage = "/login";
@@ -25,6 +27,7 @@ class AppRoute{
   static const String bookingsPage = "/bookingspage";
   static const String navigation = "/navigation";
   static const String requestbooking = "/requestbooking";
+  static const String destinationbookingpage = "/destinationbooking";
   static List<GetPage> routes = [
     GetPage(name: loginPage, page: ()=> LoginScreen(), bindings: [LoginBinding()]),
     GetPage(name: otpPage, page: ()=> OTPScreen(), bindings: [OTPBinding()]),
@@ -32,6 +35,7 @@ class AppRoute{
     GetPage(name: homePage, page: ()=>HomeScreen()),
     GetPage(name: profilePage, page: ()=>ProfilePage(), bindings: [ProfileBinding()]),
     GetPage(name: bookingsPage, page: ()=>BookingsPage(), bindings: [BookingsBinding()]),
-    GetPage(name: requestbooking, page: ()=> RequestBookingsPage(), bindings: [RequestBookingsBinding()])
+    GetPage(name: requestbooking, page: ()=> RequestBookingsPage(), bindings: [RequestBookingsBinding()]),
+    GetPage(name: destinationbookingpage, page: ()=> DestinationbookingPage(), bindings: [DestinationBookingBinding()])
   ];
 }

@@ -9,9 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  smooth_page_indicator: ^1.2.0
   cupertino_icons: ^1.0.2
   animated_text_kit: ^4.2.2
+  carousel_slider: ^4.2.1
   url_launcher: ^6.2.3
   get: ^4.6.6
   pinput: ^4.0.0
@@ -22,6 +23,8 @@ dependencies:
   cached_network_image: ^3.3.1
   sliding_up_panel: ^2.0.0+1
   google_fonts: ^6.2.1
+  table_calendar: ^3.0.1
+  uuid: ^4.4.2
 
 dev_dependencies:
   flutter_test:
