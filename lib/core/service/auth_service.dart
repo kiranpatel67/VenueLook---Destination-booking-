@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:FoGraph/presentation/login/controller/login_controller.dart';
@@ -5,102 +6,128 @@ import 'package:FoGraph/presentation/otp/controller/otp_controller.dart';
 import 'package:FoGraph/routes/app_route.dart';
 import 'package:FoGraph/presentation/userinfo/controller/userinfo_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-class AuthService {
+
+import '../../Data_model/Profile_data_model.dart';
+class AuthService1 {
   FirebaseAuth _auth = FirebaseAuth.instance;
   final LoginController loginController = Get.find();
   final OTPController otpController = Get.find();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final UserInfoController userInfoController = Get.put(UserInfoController());
 
-
-  // ... other methods
-  Future<bool> checkPhoneNumberInFirestore(String phoneNumber) async {
+  Future<void> checkPhoneNumberInFirestoreAndNavigate() async {
+    String phonenumber = loginController.phoneNumber.value;
     try {
-      // Query Firestore collection to check if the phone number exists
-      QuerySnapshot querySnapshot = await _firestore
+      final querySnapshot = await FirebaseFirestore.instance
           .collection('users')
-          .where('phone', isEqualTo: phoneNumber)
+          .where('phone', isEqualTo: phonenumber)
           .get();
-
-      // If there are any documents, the phone number exists
-      return querySnapshot.docs.isNotEmpty;
-    } catch (e) {
-      print('Error checking phone number in Firestore: $e');
-      return false; // Return false in case of an error
-    }
-  }
-  Future<void> createUserProfile() async {
-    try {
-      User? user = _auth.currentUser;
-
-      if (user != null) {
-        // Update user profile with additional information
-        await user.updateProfile(displayName: userInfoController.name.value);
-
-        // Save additional user information to Firestore or your preferred database
-        // For simplicity, you can print them for now
-        print('User Name: ${user.displayName}');
-        print('User Email: ${user.email}');
+      if (querySnapshot.docs.isNotEmpty) {
+          await signInWithPhoneNumber(phonenumber);
+      } else {
+        Get.snackbar('Error', 'Phone number not found. Please sign up.');
+        Get.toNamed(AppRoute.Signuppage);
       }
     } catch (e) {
-      print(e.toString());
+      print('Error checking phone number: $e');
+      Get.snackbar('Error', 'An error occurred. Please try again.');
     }
   }
 
 
+  FirebaseAuth auth = FirebaseAuth.instance;
+  var verificationId = ''.obs;
 
-  Future<void> verifyPhone() async {
-    await _auth.verifyPhoneNumber(
-      phoneNumber: '+91${loginController.phoneNumber}',
-      verificationCompleted: (PhoneAuthCredential credential) {},
-      verificationFailed: (FirebaseAuthException e) {},
-      codeSent: (String verificationId, int? resendToken) {
-        otpController.setVerificationId(verificationId);
-        Get.toNamed(AppRoute.otpPage);
+  void setVerificationId(String id) {
+    verificationId.value = id;
+  }
+
+  Future<void> signInWithPhoneNumber(String phoneNumber) async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: '+91$phoneNumber',
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        try {
+          UserCredential userCredential = await FirebaseAuth.instance
+              .signInWithCredential(credential);
+          Get.toNamed(AppRoute.otpPage);
+        } catch (e) {
+          Get.snackbar('Error', 'Sign-in failed: ${e.toString()}');
+        }
       },
-      codeAutoRetrievalTimeout: (String verificationId) {},
+      verificationFailed: (FirebaseAuthException e) async {
+        if (e.code == 'auth/too-many-requests') {
+          print('Quota exceeded. Trying again with a delay...');
+          await Future.delayed(Duration(seconds: 10)); // Wait for 10 seconds
+          signInWithPhoneNumber(phoneNumber);
+        } else {
+          Get.snackbar('Error', e.message ?? 'Verification failed');
+        }
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        setVerificationId(verificationId);
+        print('Verification ID received: $verificationId');
+        Get.toNamed(AppRoute.otpPage, arguments: {'verificationId': verificationId});
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        print('Auto retrieval timeout. Verification ID: $verificationId');
+      },
+      forceResendingToken: null,
     );
   }
 
-// ... (Previous code)
-
-
-// ... (Remaining code)
-
-
   Future<bool> verifyOtp() async {
-    try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: otpController.verificationId,
-        smsCode: otpController.otp,
-      );
+    if (verificationId != null && otpController != null) {
+      try {
+        print('Attempting OTP verification...');
+        print('Verification ID: ${verificationId.value}');
+        print('Entered OTP: ${otpController.otp}');
 
-      // Send the OTP to Firebase for verification
-      await _auth.signInWithCredential(credential);
+        PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: verificationId.value,
+          smsCode: otpController.otp,
+        );
 
-      // After successful OTP verification, perform additional actions
-      User? user = _auth.currentUser;
-      if (user != null) {
-        // Fetch additional user information if needed
-        String? userToken = await user.getIdToken();
-        if (userToken != null) {
-          // Perform actions with user information
-          print('User token: $userToken');
-          // Save user information or perform desired actions
-          return true; // Indicate that OTP verification was successful
+        UserCredential userCredential = await _auth.signInWithCredential(credential);
+        User? user = userCredential.user;
+
+        if (user != null) {
+          String? userToken = await user.getIdToken();
+          if (userToken != null) {
+            print('User token: $userToken');
+            return true;
+          } else {
+            Get.snackbar('Error', 'Invalid OTP');
+            return false;
+          }
         } else {
-          // Handle the case where userToken is null
-          return false; // Indicate that OTP verification failed
+          Get.snackbar('Error', 'Failed to get current user');
+          return false;
         }
-      } else {
-        return false; // Indicate that OTP verification failed
+      } catch (e) {
+        print('Exception during OTP verification: ${e.toString()}');
+        Get.snackbar('Error', 'OTP verification failed: ${e.toString()}');
+        return false;
       }
-    } catch (e) {
-      print(e.toString());
-      return false; // Indicate that OTP verification failed
+    } else {
+      Get.snackbar('Error', 'Please enter a valid OTP');
+      return false;
     }
   }
 
 
 
+Future<void> handleOtpVerification() async {
+  final Map<String, dynamic> arguments = Get.arguments;
+  final String verificationId = arguments['verificationId'];
+    bool success = await verifyOtp();
+    if (success) {
+      // You can perform additional actions if needed
+      print('OTP verification successful');
+      Get.toNamed(AppRoute.homePage);
+    } else {
+      // Handle failure case
+      print('OTP verification failed');
+    }
+  }
 }
+

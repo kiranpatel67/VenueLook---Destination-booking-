@@ -9,27 +9,30 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  smooth_page_indicator: ^1.2.0
-  cupertino_icons: ^1.0.2
   animated_text_kit: ^4.2.2
-  carousel_slider: ^4.2.1
-  url_launcher: ^6.2.3
-  get: ^4.6.6
-  pinput: ^4.0.0
-  firebase_core: ^2.24.2
-  firebase_auth: ^4.16.0
-  cloud_firestore: ^4.15.3
-  firebase_storage: ^11.6.4
   cached_network_image: ^3.3.1
-  sliding_up_panel: ^2.0.0+1
+  carousel_slider: ^4.2.1
+  cloud_firestore: ^4.15.3
+  cupertino_icons: ^1.0.2
+  smooth_page_indicator: ^1.2.0
+  firebase_auth: ^4.20.0
+  firebase_core: ^2.24.2
+  firebase_storage: ^11.6.4
+  get: ^4.6.6
+  intl: ^0.17.0
+  get_storage: ^2.1.1
   google_fonts: ^6.2.1
+  pinput: ^4.0.0
+  shimmer: ^3.0.0
+  sliding_up_panel: ^2.0.0+1
   table_calendar: ^3.0.1
+  url_launcher: ^6.2.3
   uuid: ^4.4.2
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^4.0.0
 
 flutter:

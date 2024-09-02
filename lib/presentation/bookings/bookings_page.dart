@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:FoGraph/navigation.dart';
 import 'package:FoGraph/presentation/bookings/controller/bookings_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,11 +7,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:FoGraph/routes/app_route.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../Data_model/HomeScreen_data_model.dart';
 
 class BookingsPage extends StatelessWidget {
   final BookingsController controller = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +24,9 @@ class BookingsPage extends StatelessWidget {
       body: Column(
         children: [
           _buildTabBar(),
-          _buildTabView(),
+          Expanded( // Use Expanded here to give the tab view a fixed height
+            child: _buildTabView(),
+          ),
         ],
       ),
     );
@@ -46,96 +52,56 @@ class BookingsPage extends StatelessWidget {
         controller.changesubTabIndex(index);
       },
       child: Obx(
-            () => Column(
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-                color: controller.selectedsubtabIndex.value == index
-                    ? Colors.blue
-                    : Colors.black,
-              ),
+            () =>
+            Column(
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    color: controller.selectedsubtabIndex.value == index
+                        ? Colors.blue
+                        : Colors.black,
+                  ),
+                ),
+                Container(
+                  height: 2.0,
+                  width: 60.0, // Adjust the width to your desired length
+                  color: controller.selectedsubtabIndex.value == index
+                      ? Colors.blue
+                      : Colors.transparent,
+                ),
+              ],
             ),
-            Container(
-              height: 2.0,
-              width: 60.0,  // Adjust the width to your desired length
-              color: controller.selectedsubtabIndex.value == index
-                  ? Colors.blue
-                  : Colors.transparent,
-            ),
-          ],
-        ),
       ),
     );
   }
-
 
   Widget _buildTabView() {
-    return Expanded(
-      child: Obx(
-            () => IndexedStack(
-          index: controller.selectedsubtabIndex.value ?? 0, // Default to 0 if null
-          children: [
-            _buildTabContent(controller.selectedsubtabIndex.value != null ? (controller.selectedsubtabIndex.value == 0 ? 'Oh Snap! No bookings found' : '') : ''),
-            _buildTabContent(controller.selectedsubtabIndex.value != null ? (controller.selectedsubtabIndex.value == 1 ? 'Oh Snap! No bookings found' : '') : ''),
-            // _buildTabContent('No cancelled bookings'),
-          ],
-        ),
-      ),
+    return Obx(
+          () =>
+          IndexedStack(
+            index: controller.selectedsubtabIndex.value,
+            children: [
+              _buildTabContent(),
+              // Remove the string argument, since it doesn't affect the rendering
+              _buildTabContent(),
+              _buildTabContent(),
+            ],
+          ),
     );
   }
 
-  Widget _buildTabContent(String content) {
+  Widget _buildTabContent() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FutureBuilder(
-            future: getAllBookings(),
-            builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text('Booking details loaded successfully');
-                } else {
-                  return Text('No booking details found');
-                }
-
-            },
-          ),
-          SizedBox(height: 20), // Add some space between the card and the button
-          Text(
-            content,
-            style: TextStyle(fontSize: 15.0),
-            textAlign: TextAlign.center,
-          ),
-          if (controller.selectedsubtabIndex.value == 0 ||
-              controller.selectedsubtabIndex.value == 1) // Show button only for 'Upcoming' and 'Cancelled' tabs
-            ElevatedButton(
-              onPressed: () {
-                _navigateToHomePage();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green, // Set the button background color to green
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0), // Adjust the borderRadius as needed
-                ),
-              ),
-              child: Text(
-                'BOOK A DESTINATION',
-                style: TextStyle(color: Colors.white), // Set the text color to white
-              ),
-            ),
-        ],
-      ),
+      child: Bookinglist(),
     );
   }
-
 
   void _navigateToHomePage() {
     Get.offAllNamed(AppRoute.homePage);
   }
-
 
   Widget buildBottomNavigationBar() {
     return BottomNavigationBar(
@@ -175,27 +141,159 @@ class BookingsPage extends StatelessWidget {
     }
   }
 
+  Widget Bookinglist() {
+    return Obx(
+          () {
+        if (controller.randomDestinations.value.isEmpty) {
+          return Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: ListView.separated(
+              itemCount: 10, // Show a placeholder for 10 items
+              separatorBuilder: (context, index) =>
+                  Padding(padding: EdgeInsets.only(bottom: 20)),
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white,
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(1),
+                        margin: EdgeInsets.all(3),
+                        height: 60,
+                        width: 60,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.grey[300],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              color: Colors.grey[300],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                  color: Colors.grey[300],
+                                  height: 16,
+                                  width: double.infinity,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                  color: Colors.grey[300],
+                                  height: 14,
+                                  width: double.infinity,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
+        }
 
-  Future<void> getAllBookings() async {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    final String currentUid = _auth.currentUser!.uid;
-    final CollectionReference _bookingCollection = _firestore
-        .collection('destination')
-        .doc(controller.destination.value?.id)
-        .collection('booking');
-    Rx<HomeDestinationData?> destination = Rx<HomeDestinationData?>(null);
-    final QuerySnapshot querySnapshot = await _bookingCollection.get();
-
-    querySnapshot.docs.forEach((document) {
-      if (document['user_id'] == currentUid) {
-        print('Booking details:');
-        print('Booking ID: ${destination.value?.propertyname}');
-        print('Booking Date: ${destination.value?.propertyAddress}');
-        print('Booking Price: ${destination.value?.city}');
-        // Show other booking details here
-      }
-    });
+        return ListView.separated(
+          itemCount: controller.randomDestinations.value.length,
+          separatorBuilder: (context, index) =>
+              Padding(padding: EdgeInsets.only(bottom: 20)),
+          itemBuilder: (context, index) {
+            final destination = controller.randomDestinations.value[index];
+            return Container(
+              margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Color(0xFFECEFEF),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(1),
+                    margin: EdgeInsets.all(3),
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        destination.featureimage ?? '',
+                        fit: BoxFit.fill,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Icon(Icons.error),
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: progress.expectedTotalBytes != null
+                                  ? progress.cumulativeBytesLoaded /
+                                  progress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            destination.propertyname ?? 'Unknown',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            destination.price != null
+                                ? '\$${destination.price}'
+                                : 'Price not available',
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
-}
 
+}

@@ -1,13 +1,12 @@
 import 'package:FoGraph/presentation/destinationbooking/detinationbookingController.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:FoGraph/routes/app_route.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:uuid/uuid.dart';
-import 'package:uuid/v4.dart';
+import 'package:intl/intl.dart';
 
 class DestinationbookingPage extends GetView<DestinationBookingController> {
   DestinationbookingPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,14 +73,14 @@ class DestinationbookingPage extends GetView<DestinationBookingController> {
                         ),
                       ),
                       Obx(
-                            () => Padding(
+                        () => Padding(
                           padding: const EdgeInsets.fromLTRB(20, 6, 0, 0),
                           child: Text(
-                            '${controller.selectedDate.value}',
+                              controller.selectedDate.value.isEmpty
+                                  ? DateFormat('dd-mm-yyyy').format(DateTime.now())
+                                  : '${controller.selectedDate.value}',
                             style: TextStyle(
-                              fontSize: 20,
-                                color: Color(0xFF71797E)
-                            ),
+                                fontSize: 20, color: Color(0xFF71797E)),
                           ),
                         ),
                       ),
@@ -124,26 +123,29 @@ class DestinationbookingPage extends GetView<DestinationBookingController> {
                               ],
                             ),
                           ),
-                      
                           Padding(
                             padding: EdgeInsets.only(left: 6),
                             child: Row(
-                              children: controller.destination.value?.hourlist?.map((hour) {
-                                return Row(
-                                  children: [
-                                    Obx(
+                              children: controller.destination.value?.hourlist
+                                      ?.map((hour) {
+                                    return Row(
+                                      children: [
+                                        Obx(
                                           () => Radio(
-                                        value: hour,
-                                        groupValue: controller.selectedHour.value,
-                                        onChanged: (value) {
-                                          controller.setSelectedHour(value as String);
-                                        },
-                                      ),
-                                    ),
-                                    Text(hour),
-                                  ],
-                                );
-                              }).toList()?? [],
+                                            value: hour,
+                                            groupValue:
+                                                controller.selectedHour.value,
+                                            onChanged: (value) {
+                                              controller.setSelectedHour(
+                                                  value as String);
+                                            },
+                                          ),
+                                        ),
+                                        Text(hour),
+                                      ],
+                                    );
+                                  }).toList() ??
+                                  [],
                             ),
                           ),
                         ],
@@ -181,9 +183,12 @@ class DestinationbookingPage extends GetView<DestinationBookingController> {
                   child: GestureDetector(
                     onTap: () {
                       controller.saveData();
-                      print('hi');
+                      Get.toNamed(AppRoute.bookingsPage, arguments: {
+                        'destination': controller.destination.value,
+                        'bookingdata': controller.bookingData.value
+                      });
                     },
-                    child: const Column(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -226,8 +231,9 @@ class DestinationbookingPage extends GetView<DestinationBookingController> {
       ),
     );
   }
-  Future<Null>  _showDatePicker() {
-     return showDatePicker(
+
+  Future<Null> _showDatePicker() {
+    return showDatePicker(
       context: Get.context!,
       initialDate: DateTime.now(),
       firstDate: DateTime(2022),

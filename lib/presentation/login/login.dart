@@ -2,30 +2,26 @@ import 'package:FoGraph/core/extensions/padding_extension.dart';
 import 'package:FoGraph/core/service/auth_service.dart';
 import 'package:FoGraph/presentation/login/controller/login_controller.dart';
 import 'package:FoGraph/routes/app_route.dart';
-import 'package:get/get.dart';
-import 'package:flutter/material.dart';
-import '../../custom_button.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../custom_button.dart';
 import '../../utils/constant/app_textstyles.dart';
 import '../otp/controller/otp_controller.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../profile/controller/profile_controller.dart';
 
 class LoginScreen extends GetWidget<LoginController> {
   final LoginController loginController = Get.find();
   final OTPController otpController = OTPController();
-  final AuthService authService = Get.put(AuthService());
-
-  FirebaseAuth _auth = FirebaseAuth.instance;
-
-  final FocusNode _focusNode = FocusNode();
+  final AuthService1 authService = Get.put(AuthService1());
 
   LoginScreen({Key? key}) : super(key: key);
 
   // Validate the phone number
   bool validatePhoneNumber(String phoneNumber) {
-    // You can add your validation logic here
-    // For simplicity, this example checks if the phone number is not empty
     return phoneNumber.isNotEmpty;
   }
 
@@ -49,23 +45,23 @@ class LoginScreen extends GetWidget<LoginController> {
               child: Stack(
                 children: [
                   Obx(
-                        () => controller.animationPlayed.value
+                    () => controller.animationPlayed.value
                         ? Text(
-                      'Mobile',
-                      style:
-                      AppTextStyles.getTextStyle(screenheight * 0.08),
-                      textAlign: TextAlign.left,
-                    )
+                            'Mobile',
+                            style:
+                                AppTextStyles.getTextStyle(screenheight * 0.08),
+                            textAlign: TextAlign.left,
+                          )
                         : TypewriterAnimatedTextKit(
-                      text: const ['Mobile\nNumber'],
-                      textStyle:
-                      AppTextStyles.getTextStyle(screenheight * 0.08),
-                      textAlign: TextAlign.left,
-                      totalRepeatCount: 1,
-                      repeatForever: false,
-                      speed: const Duration(milliseconds: 200),
-                      pause: const Duration(milliseconds: 1000),
-                    ),
+                            text: const ['Mobile\nNumber'],
+                            textStyle:
+                                AppTextStyles.getTextStyle(screenheight * 0.08),
+                            textAlign: TextAlign.left,
+                            totalRepeatCount: 1,
+                            repeatForever: false,
+                            speed: const Duration(milliseconds: 200),
+                            pause: const Duration(milliseconds: 1000),
+                          ),
                   ),
                   Align(
                     alignment: AlignmentDirectional.center,
@@ -87,22 +83,25 @@ class LoginScreen extends GetWidget<LoginController> {
                                   width: screenwidth * 0.09,
                                 ).addPaddingRight(padding: screenwidth * 0.02),
                                 Text('India +91',
-                                    style: AppTextStyles.getTextStyle(
-                                        screenheight * 0.02))
+                                        style: AppTextStyles.getTextStyle(
+                                            screenheight * 0.02))
                                     .addPaddingVertical(
-                                    padding: screenheight * 0.01),
+                                        padding: screenheight * 0.01),
                               ],
                             ),
                           ),
                           Flexible(
                             child: Container(
-                              padding: EdgeInsets.only(
-                                  right: screenheight * 0.02),
+                              padding:
+                                  EdgeInsets.only(right: screenheight * 0.02),
                               alignment: AlignmentDirectional.topCenter,
                               child: TextField(
-                                style: TextStyle(fontSize: screenheight*0.024),
-                                onChanged: (value) =>
-                                    loginController.setPhoneNumber(value),
+                                style:
+                                    TextStyle(fontSize: screenheight * 0.024),
+                                onChanged: (value) {
+                                  loginController.setPhoneNumber(value);
+                                  controller.savePhonenumberToStorage();
+                                },
                                 keyboardType: TextInputType.phone,
                                 decoration: InputDecoration(
                                   focusedBorder: OutlineInputBorder(
@@ -117,7 +116,7 @@ class LoginScreen extends GetWidget<LoginController> {
                                   hintText: 'Enter mobile number',
                                   filled: true,
                                   fillColor:
-                                  Colors.white, // Set the background color
+                                      Colors.white, // Set the background color
                                 ),
                               ),
                             ),
@@ -137,14 +136,14 @@ class LoginScreen extends GetWidget<LoginController> {
               child: Column(
                 children: [
                   Obx(
-                        () {
+                    () {
                       if (controller.showLinearProgress.value) {
                         return Container(
                           height: screenheight * 0.004,
                           child: LinearProgressIndicator(
                             backgroundColor: Colors.green,
                             valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.white),
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         );
                       } else {
@@ -152,7 +151,6 @@ class LoginScreen extends GetWidget<LoginController> {
                       }
                     },
                   ),
-
                   Text(
                     'Your mobile number will be verified.',
                     style: AppTextStyles.title,
@@ -160,29 +158,23 @@ class LoginScreen extends GetWidget<LoginController> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: GreenButton(
-                      text: 'CONTINUE',
-                      onPressed: () async {
-                        String phoneNumber = loginController.phoneNumber.value;
-                        if (validatePhoneNumber(phoneNumber)) {
+                        text: 'CONTINUE',
+                        onPressed: () async {
+                          String phoneNumber =
+                              loginController.phoneNumber.value;
                           controller.setShowLinearProgress(true);
+                          print('phonenumber=$phoneNumber');
+                          controller.savePhonenumberToStorage();
+                          controller.setShowLinearProgress(false);
+                          authService.checkPhoneNumberInFirestoreAndNavigate();
 
-                          Get.toNamed(AppRoute.otpPage);
-                          await authService.verifyPhone();
-                        } else {
-                          // Show a snackbar for invalid phone number
-                          Get.snackbar(
-                            'Invalid Phone Number',
-                            'Please enter a valid phone number.',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.white,
-                            snackStyle: SnackStyle.FLOATING,
-                            borderRadius: 10,
-                            margin: EdgeInsets.zero,
-                          );
-                        }
-                      },
-                    ),
+                        }),
                   ),
+                  TextButton(
+                      onPressed: () {
+                        Get.toNamed(AppRoute.Signuppage);
+                      },
+                      child: Text('Sign Up'))
                 ],
               ),
             ),
@@ -191,6 +183,4 @@ class LoginScreen extends GetWidget<LoginController> {
       ),
     );
   }
-
 }
-

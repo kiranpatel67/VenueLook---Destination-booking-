@@ -11,11 +11,14 @@ class RequestBookingsController extends GetxController {
   Rx<HomeDestinationData?> destination = Rx<HomeDestinationData?>(null);
   Rx<RequestBookingData?> bookingData = Rx<RequestBookingData?>(null);
 
+  @override
   void onInit() {
-    super.onInit();
+    print('argument=${Get.arguments['destination'].toString()}');
     destination.value = Get.arguments?['destination'];
+    print(destination.value?.price);
     startAutomaticPageChange();
     getData();
+    super.onInit();
   }
 
   @override
@@ -66,11 +69,19 @@ class RequestBookingsController extends GetxController {
   getData() async {
     try {
       final Map<String, dynamic>? args = Get.arguments as Map<String, dynamic>?;
-
-      print("image are" + "${destination.value?.id}");
-      if (destination.value?.id != null) {
-        bookingData.value =
-            await getDestionationDetails(id: destination.value?.id);
+      print("Arguments: $args");
+      if (args != null && args.containsKey('destination')) {
+        destination.value = args['destination'];
+        print("Destination ID: ${destination.value?.id}");
+        if (destination.value?.id != null) {
+          bookingData.value =
+              await getDestionationDetails(id: destination.value?.id);
+          print(bookingData.value?.city);
+        } else {
+          print("Destination ID is null");
+        }
+      } else {
+        print("Destination data not found in arguments");
       }
     } on Exception catch (e) {
       print(e.toString());

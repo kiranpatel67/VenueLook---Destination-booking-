@@ -1,6 +1,10 @@
+import 'package:FoGraph/routes/app_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
-class AuthService {
+class AuthService2 {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<bool> verifyOtp(String phoneNumber, String enteredOtp) async {
@@ -26,4 +30,5 @@ class AuthService {
       return false;
     }
   }
+
 }

@@ -1,30 +1,39 @@
+import 'dart:ffi';
+
 import 'package:FoGraph/core/extensions/padding_extension.dart';
+import 'package:FoGraph/custom_button.dart';
 import 'package:FoGraph/presentation/login/controller/login_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:FoGraph/presentation/userinfo/controller/userinfo_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+import '../../Data_model/UserData_model.dart';
+import '../../authservice.dart';
+import '../../core/service/auth_service.dart';
 import '../profile/controller/profile_controller.dart';
 import 'package:FoGraph/routes/app_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
-
 class ProfilePage extends StatelessWidget {
   final ProfileController controller = Get.find();
-
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
   UserInfoController userInfoController = Get.put(UserInfoController());
   LoginController loginController = Get.put(LoginController());
-
+  final AuthService1 authService = Get.put(AuthService1());
   @override
   Widget build(BuildContext context) {
-    double screenheight = MediaQuery.of(context).size.height;
-    double screenwidth = MediaQuery.of(context).size.width;
-
-    // Fetch user information from Firestore when the page is built
-    fetchUserData();
+    double screenheight = MediaQuery
+        .of(context)
+        .size
+        .height;
+    double screenwidth = MediaQuery
+        .of(context)
+        .size
+        .width;
 
     return Scaffold(
       appBar: AppBar(
@@ -35,8 +44,9 @@ class ProfilePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildHeader(context),
-            _buildInfoBox(context),
             SizedBox(height: 16.0),
+            Profile(),
+            Editprofilebutton(context),
             _buildSignOutButton(context),
             // _buildActionButtons(context),
           ],
@@ -46,37 +56,32 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Function to fetch user information from Firestore
-  void fetchUserData() async {
-    // Reference to the "users" collection in Firestore
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-
-    // Get the current phone number from the LoginController
-    String phoneNumber = loginController.phoneNumber.value;
-
-    // Get the user document using the phone number
-    DocumentSnapshot userDocument = await users.doc(phoneNumber).get();
-
-    // Update the user information in controllers
-    userInfoController.setName(userDocument['name'] ?? '');
-    userInfoController.setEmail(userDocument['email'] ?? '');
-  }
 
   Widget _buildHeader(BuildContext context) {
     return Stack(
       children: [
         Container(
-          height: MediaQuery.of(context).size.height * 0.35,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height * 0.35,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('asset/img/profile_bg.jpeg'), // Replace with your image
+              image: AssetImage('asset/img/profile_bg.jpeg'),
+              // Replace with your image
               fit: BoxFit.cover,
             ),
           ),
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height * 0.26 - 30.0,
-          left: MediaQuery.of(context).size.width * 0.15,
+          top: MediaQuery
+              .of(context)
+              .size
+              .height * 0.26 - 30.0,
+          left: MediaQuery
+              .of(context)
+              .size
+              .width * 0.15,
           child: Container(
             width: 100.0,
             height: 100.0,
@@ -97,71 +102,39 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoBox(BuildContext context) {
-    double screenwidth = MediaQuery.of(context).size.width;
-    double screenheight = MediaQuery.of(context).size.height;
+  Widget Profile() {
+      final storage = GetStorage();
+     var userName = storage.read('name') ?? '';
+     var userPhone= storage.read('email')?? '';
+     var userEmail= storage.read('phone')?? '';
+      return Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildInfoRow(Icons.person, userName, 4.0),
+            _buildInfoRow(Icons.phone, userPhone, 4.0),
+            _buildInfoRow(Icons.email, userEmail, 4.0),
+          ],
+        ),
+      );
+  }
 
+  Widget _buildInfoRow(IconData icon, String text, double spacing) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: screenwidth * 0.04),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.black, width: 1)
+      ),
+      padding: EdgeInsets.all(12),
+      margin: EdgeInsets.fromLTRB(16, 6, 16, 6), // Add padding to the container
+      child: Row(
         children: [
-          _buildInfoRow(Icons.person, userInfoController.name.value, screenheight),
-          _buildInfoRow(Icons.phone, loginController.phoneNumber.value, screenheight),
-          _buildInfoRow(Icons.email, userInfoController.email.value, screenheight),
+          Icon(icon, size: 24),
+          SizedBox(width: spacing),
+          Text(text, style: TextStyle(fontSize: 16)),
         ],
       ),
     );
   }
-
-
-  Widget _buildInfoRow(IconData icon, String value, double screenheight) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: 1.0),
-      ),
-      padding: EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Icon(icon, size: screenheight * 0.025, color: Colors.black),
-          SizedBox(width: 8.0),
-          Text(value, style: TextStyle(fontSize: 18.0)),
-        ],
-      ),
-    ).addPaddingTop(padding: screenheight * 0.015);
-  }
-
-  // Widget _buildActionButtons(BuildContext context) {
-  //   double screenwidth = MediaQuery.of(context).size.width;
-  //   double screenheight = MediaQuery.of(context).size.height;
-  //
-  //   return Padding(
-  //     padding: EdgeInsets.symmetric(horizontal: screenwidth * 0.27),
-  //     child: GestureDetector(
-  //       onTap: () {
-  //         // Show the bottom sheet to edit the profile
-  //         _showEditProfileBottomSheet(context);
-  //       },
-  //       child: Container(
-  //         height: screenheight * 0.045,
-  //         decoration: BoxDecoration(
-  //           border: Border.all(color: Colors.grey),
-  //         ),
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Icon(Icons.edit, color: Colors.black, size: screenheight * 0.025)
-  //                 .addPaddingRight(padding: screenwidth * 0.02),
-  //             Text(
-  //               'EDIT PROFILE',
-  //               style: TextStyle(color: Colors.black, fontSize: screenheight * 0.02),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   ).addPaddingTop(padding: screenheight * 0.03);
-  // }
 
   Widget buildBottomNavigationBar() {
     return BottomNavigationBar(
@@ -201,84 +174,44 @@ class ProfilePage extends StatelessWidget {
     }
   }
 
-  // Function to show the bottom sheet
-  // void _showEditProfileBottomSheet(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return _buildEditProfileBottomSheet(context);
-  //     },
-  //   );
-  // }
-
-  // Function to build the bottom sheet content
-//   Widget _buildEditProfileBottomSheet(BuildContext context) {
-//     // Set initial values for name and email
-//     nameController.text = 'John Doe';
-//     emailController.text = 'john.doe@example.com';
-//
-//     return Container(
-//       padding: EdgeInsets.all(16.0),
-//       child: SingleChildScrollView(
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           crossAxisAlignment: CrossAxisAlignment.stretch,
-//           children: [
-//             Text(
-//               'Update Profile',
-//               style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-//             ),
-//             SizedBox(height: 16.0),
-//             TextField(
-//               controller: nameController,
-//               decoration: InputDecoration(labelText: 'Name'),
-//             ),
-//             SizedBox(height: 16.0),
-//             TextField(
-//               controller: emailController,
-//               decoration: InputDecoration(labelText: 'Email'),
-//             ),
-//             SizedBox(height: 16.0),
-//             ElevatedButton(
-//               onPressed: () {
-//                 print('Updated Name: ${nameController.text}');
-//                 print('Updated Email: ${emailController.text}');
-//                 // Close the bottom sheet
-//                 Navigator.of(context).pop();
-//               },
-//               child: Text('UPDATE'),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-  Widget _buildSignOutButton(BuildContext context) {
-    double screenwidth = MediaQuery.of(context).size.width;
-    double screenheight = MediaQuery.of(context).size.height;
+  Widget Editprofilebutton(BuildContext context) {
+    double screenwidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    double screenheight = MediaQuery
+        .of(context)
+        .size
+        .height;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: screenwidth * 0.27),
+      padding: EdgeInsets.symmetric(horizontal: screenwidth * 0.30),
       child: GestureDetector(
         onTap: () {
-          // Call the signOut function when the button is tapped
-          signOut();
+          _showSlidingPanel(context);
         },
         child: Container(
           height: screenheight * 0.045,
+          width: screenheight * 1,
           decoration: BoxDecoration(
-            color: Colors.green, // Set the button color to green
-            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(4),
+            color: Colors.white, // S
+            border: Border.all(color: Colors.grey.shade300),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.logout, color: Colors.white, size: screenheight * 0.025)
-                  .addPaddingRight(padding: screenwidth * 0.02),
+              Image.asset(
+                'asset/img/editiconpng.png',
+                width: 20,
+                height: 20,
+              ).addPaddingRight(padding: 5),
+
               Text(
-                'SIGN OUT',
-                style: TextStyle(color: Colors.white, fontSize: screenheight * 0.02),
+                'EDIT PROFILE',
+                style: TextStyle(
+                    color: Colors.black, fontSize: screenheight * 0.02,
+                    fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -286,6 +219,173 @@ class ProfilePage extends StatelessWidget {
       ),
     ).addPaddingTop(padding: screenheight * 0.03);
   }
+
+  void _showSlidingPanel(context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        // Get the current view insets (keyboard height)
+        final bottomInset = MediaQuery
+            .of(context)
+            .viewInsets
+            .bottom;
+
+        return AnimatedPadding(
+          padding: EdgeInsets.only(bottom: bottomInset),
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Text(
+                      'Update Profile',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 30),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15),
+                          child: Text('Name'),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(13, 0, 8, 0),
+                            child: TextField(
+                              style: TextStyle(fontSize: 15),
+                              decoration: InputDecoration(
+                                hintText: '${controller.userName}',
+                                hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.grey),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              controller: controller.nameController,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15),
+                          child: Text('Email'),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(13, 0, 8, 0),
+                            child: TextField(
+                              style: TextStyle(fontSize: 15),
+                              decoration: InputDecoration(
+                                hintText: '${controller.userEmail}',
+                                hintStyle: TextStyle(
+                                    fontSize: 15, color: Colors.grey),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              controller: controller.emailController,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 30),
+                    Container(
+                      height: 40,
+                      width: 150,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onPressed: () {
+                          controller.handleUpdate();
+                          Navigator.pop(context);
+                        },
+                        child: Center(
+                          child: Text(
+                            'UPDATE',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+  Widget _buildSignOutButton(BuildContext context) {
+    double screenwidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    double screenheight = MediaQuery
+        .of(context)
+        .size
+        .height;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: screenwidth * 0.33),
+      child: GestureDetector(
+        onTap: () {
+          Get.toNamed(AppRoute.loginPage);
+        },
+        child: Container(
+          height: screenheight * 0.045,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            color: Colors.green, // Set the button color to green
+            border: Border.all(color: Colors.grey),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                  Icons.logout, color: Colors.white, size: screenheight * 0.025)
+                  .addPaddingRight(padding: screenwidth * 0.02),
+              Text(
+                'SIGN OUT',
+                style: TextStyle(
+                    color: Colors.white, fontSize: screenheight * 0.02),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ).addPaddingTop(padding: screenheight * 0.03);
+  }
+
   void signOut() {
     FirebaseAuth.instance.signOut();
     Get.toNamed(AppRoute.landingPage);

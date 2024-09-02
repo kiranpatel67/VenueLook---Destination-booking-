@@ -15,7 +15,7 @@ class UserInfoScreen extends GetWidget<LoginController> {
   final FocusNode _focusNode = FocusNode();
   final LoginController loginController = Get.put(LoginController());
 
-  final AuthService authService = Get.put(AuthService());
+  final AuthService1 authService = Get.put(AuthService1());
 
   UserInfoScreen({Key? key}) : super(key: key);
 

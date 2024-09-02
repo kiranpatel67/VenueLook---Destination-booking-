@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:FoGraph/routes/app_route.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../Data_model/HomeScreen_data_model.dart';
 
@@ -20,19 +21,100 @@ class HomeScreen extends StatelessWidget {
       bottomNavigationBar: buildBottomNavigationBar(),
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        leading: LogoWidget(),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: Image.asset('asset/img/fograph_logo.png', width: 10 ,height: 10,),
+        ),
         automaticallyImplyLeading: false, // Remove back arrow button
         backgroundColor: Colors.grey[50],
         title: const Text('FoGraph'),
       ),
-      body: FutureBuilder(
-        future:
-            getOffersStream(),
-        builder: (context,
-            AsyncSnapshot<List<HomeDestinationData>> snapshot) {
-          print(snapshot);
+      body:
+      FutureBuilder(
+        future: getOffersStream(),
+        builder: (context, AsyncSnapshot<List<HomeDestinationData>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text('Please Wait');
+            return Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: ListView.builder(
+                itemCount: 5, // Number of shimmer items
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Row with one image occupying full width with rounded corners
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 250,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(15.0), // Circular border
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        // First row of grid items with rounded corners
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 170,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(15.0), // Circular border
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Container(
+                                height: 170,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(15.0), // Circular border
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        // Second row of grid items with rounded corners
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 170,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(15.0), // Circular border
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Container(
+                                height: 170,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(15.0), // Circular border
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            );
           }
 
           var docs = snapshot.data;
@@ -48,7 +130,6 @@ class HomeScreen extends StatelessWidget {
           List<HomeDestinationData> type4List = docs;
 
           docs.forEach((doc) {
-
             var data = doc;
             if (data.type != null) {
               int type = data.type ?? 0;
@@ -63,30 +144,29 @@ class HomeScreen extends StatelessWidget {
           });
 
           return SingleChildScrollView(
-            scrollDirection: Axis.vertical,
             child: Column(
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: screenheight * 0.01),
-                  child: _buildTypeListView(
-                      type3List, 'Budget Friendly Destination', context),
+                _buildTypeListView(
+                  type3List,
+                  'Budget Friendly Destination',
+                  context,
                 ),
                 _buildOffersGrid(context),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: screenheight * 0.01),
-                  child: _buildTypeListView(
-                      type1List, 'Top-notch Destinations', context),
+                _buildTypeListView(
+                  type1List,
+                  'Top-notch Destinations',
+                  context,
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: screenheight * 0.01),
-                  child: _buildTypeListView(
-                      type2List, 'Prime Destinations', context),
+                _buildTypeListView(
+                  type2List,
+                  'Prime Destinations',
+                  context,
                 ),
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: screenheight * 0.01),
-                        child:_buildExploreView(
-                          type4List, 'Explore Destinations', context),
-                        ),
+                _buildExploreView(
+                  type4List,
+                  'Explore Destinations',
+                  context,
+                ),
               ],
             ),
           );
@@ -94,7 +174,6 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildTypeListView(
       List<HomeDestinationData> typeList, String title, BuildContext context) {
     double screenheight = MediaQuery.of(context).size.height;
@@ -222,7 +301,7 @@ class HomeScreen extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               Map<String, dynamic>? offer =
-                  docs[index].data() as Map<String, dynamic>?;
+              docs[index].data() as Map<String, dynamic>?;
 
               // Check if offer is not null and contains the 'image_url' key
               if (offer != null && offer.containsKey('image_url')) {
@@ -475,43 +554,43 @@ class DefaultImageWidget extends StatelessWidget {
   }
 }
 
-class LogoWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    double screenwidth = MediaQuery.of(context).size.width;
-    double logosize = screenwidth * 0.08;
-    return FutureBuilder(
-      future: fetchLogoUrl(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        }
-
-        if (snapshot.hasError) {
-          return const Text('Error loading logo');
-        }
-
-        String logoUrl = snapshot.data.toString();
-
-        return Image.network(
-          logoUrl,
-          width: logosize, // Use logosize for the width
-          height: logosize, // Use logosize for the height
-        );
-      },
-    );
-  }
-
-  Future<String> fetchLogoUrl() async {
-    String logoPath = 'FoGraph Logo.png';
-
-    Reference ref = FirebaseStorage.instance.ref().child(logoPath);
-
-    try {
-      String downloadURL = await ref.getDownloadURL();
-      return downloadURL;
-    } catch (e) {
-      rethrow;
-    }
-  }
-}
+// class LogoWidget extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     double screenwidth = MediaQuery.of(context).size.width;
+//     double logosize = screenwidth * 0.06;
+//     return FutureBuilder(
+//       future: fetchLogoUrl(),
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return const CircularProgressIndicator();
+//         }
+//
+//         if (snapshot.hasError) {
+//           return const Text('Error loading logo');
+//         }
+//
+//         String logoUrl = snapshot.data.toString();
+//
+//         return Image.network(
+//           logoUrl,
+//           width: logosize, // Use logosize for the width
+//           height: logosize, // Use logosize for the height
+//         );
+//       },
+//     );
+//   }
+//
+//   Future<String> fetchLogoUrl() async {
+//     String logoPath = 'FoGraph Logo.png';
+//
+//     Reference ref = FirebaseStorage.instance.ref().child(logoPath);
+//
+//     try {
+//       String downloadURL = await ref.getDownloadURL();
+//       return downloadURL;
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+// }

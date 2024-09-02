@@ -14,7 +14,7 @@ class DestinationBookingController extends GetxController {
   RxString selectedDate = ''.obs;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-
+  final currentIndex = 0.obs;
   void setSelectedDate(String value) {
     selectedDate.value = value;
   }
@@ -22,6 +22,7 @@ class DestinationBookingController extends GetxController {
   void setSelectedHour(String value) {
     selectedHour.value = value;
   }
+
 
   @override
   void onInit() {

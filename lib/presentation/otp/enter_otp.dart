@@ -1,5 +1,7 @@
 import 'package:FoGraph/core/extensions/padding_extension.dart';
+import 'package:FoGraph/presentation/home/home_screen.dart';
 import 'package:FoGraph/routes/app_route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:FoGraph/utils/constant/app_textstyles.dart';
 import '../../custom_button.dart';
@@ -12,14 +14,21 @@ import 'package:FoGraph/core/service/auth_service.dart';
 class OTPScreen extends StatelessWidget {
   final LoginController loginController = Get.find();
   final OTPController otpController = Get.put(OTPController());
-  final AuthService authService = Get.put(AuthService());
+  final AuthService1 authService = Get.put(AuthService1());
 
   OTPScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double screenwidth = MediaQuery.of(context).size.width;
-    double screenheight = MediaQuery.of(context).size.height;
+    String verificationId;
+    double screenwidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    double screenheight = MediaQuery
+        .of(context)
+        .size
+        .height;
 
     final defaultPinTheme = PinTheme(
       width: screenwidth * 0.15,
@@ -158,27 +167,7 @@ class OTPScreen extends StatelessWidget {
                     child: GreenButton(
                       text: 'VERIFY OTP',
                       onPressed: () async {
-                        bool isOtpValid = await authService.verifyOtp();
-
-                        if (isOtpValid) {
-                          bool exists = await authService.checkPhoneNumberInFirestore(loginController.phoneNumber.value);
-
-                          if (exists) {
-                            Get.toNamed(AppRoute.homePage);
-                          } else {
-                            Get.toNamed(AppRoute.userinfoPage);
-                          }
-                        } else {
-                          Get.snackbar(
-                            'Error',
-                            'Incorrect OTP. Please try again.',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.white,
-                            snackStyle: SnackStyle.FLOATING,
-                            borderRadius: 10,
-                            margin: EdgeInsets.zero,
-                          );
-                        }
+                        authService.handleOtpVerification();
                         otpController.otpReceived();
                       },
                     ),
